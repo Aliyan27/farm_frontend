@@ -3,22 +3,46 @@ import {
   Route,
   Navigate,
   BrowserRouter as Router,
-} from "react-router-dom"; // ← correct import
+} from "react-router-dom";
 import RouteList from "./RouteList";
+import type { JSX } from "react";
+import { useAuthStore } from "@/store/AuthStore";
+
+const protectedRoute = (element: JSX.Element) => {
+  const { isAuthenticated } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return element;
+};
 
 const InitiateRoute = () => {
   return (
     <Router>
       <Routes>
-        {RouteList.map((route, index) => (
-          <Route
-            key={`route-${index}`}
-            path={route.path}
-            element={<route.element />}
-          />
-        ))}
+        {RouteList.map((route, index) => {
+          if (route.isPublic) {
+            return (
+              <Route
+                key={`route-${index}`}
+                path={route.path}
+                element={<route.element />}
+              />
+            );
+          }
 
-        <Route path="*" element={<Navigate to={"/login"} replace />} />
+          return (
+            <Route
+              key={`route-${index}`}
+              path={route.path}
+              element={protectedRoute(<route.element />)}
+            />
+          );
+        })}
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

@@ -2,7 +2,7 @@ import AuthWrapper from "@/components/AuthWrapper";
 import { SignupForm } from "@/components/SignupForm";
 import { useNavigation } from "@/Hooks/useNavigation";
 import { getErrorDataCase } from "@/lib/utils";
-import { signupService } from "@/services/commonService";
+import { signupService } from "@/services";
 import { useState } from "react";
 
 const SignupScreen = () => {

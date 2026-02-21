@@ -1,21 +1,24 @@
 import { LoginForm } from "@/components/login-form";
 import AuthWrapper from "@/components/AuthWrapper";
 import { useState } from "react";
-import { signinService } from "@/services/commonService";
 import { getErrorDataCase } from "@/lib/utils";
 import { useNavigation } from "@/Hooks/useNavigation";
+import { signinService } from "@/services";
+import { useAuthStore } from "@/store/AuthStore";
 
 const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { navigateTo } = useNavigation();
+  const { login } = useAuthStore();
 
   const onLogin = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       let response = await signinService(email, password);
+      console.log(response);
       if (response.message.toLowerCase() === "success") {
-        console.log(response.data.token);
+        login(response.data.token);
         globalThis.authToken = response.data.token;
         setError("");
         navigateTo("/home");

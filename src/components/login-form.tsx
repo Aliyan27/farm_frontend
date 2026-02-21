@@ -5,7 +5,6 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
@@ -37,7 +36,7 @@ export function LoginForm(props: LoginFormProps) {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("login===>");
+      console.log("login===>", values);
       props.onSubmit(values.email, values.password);
     },
   });
@@ -115,7 +114,7 @@ export function LoginForm(props: LoginFormProps) {
         )}
 
         {/* Separator & GitHub */}
-        <FieldSeparator>Or continue with</FieldSeparator>
+        {/* <FieldSeparator>Or continue with</FieldSeparator> */}
 
         <Field>
           {/* <Button variant="outline" type="button" disabled={props.isLoading}>

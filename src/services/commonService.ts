@@ -1,7 +1,7 @@
+import type { IResponse, ISigninResponse, IUser } from "@/@types";
 import ApiNames from "@/constants/ApiNames";
 import { apiRequestNoAuth } from "./NetworkService";
 import { RequestMethod } from "@/constants/Method";
-import type { IResponse, ISigninResponse, IUser } from "@/@types/commonTypes";
 
 export const signinService = async (email: string, password: string) => {
   let endPoint = ApiNames.signin;
