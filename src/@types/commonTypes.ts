@@ -6,3 +6,12 @@ export interface IResponse<T> {
 export interface ISigninResponse {
   token: string;
 }
+
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  isEmailVerified: boolean;
+  createdAt: Date;
+}
