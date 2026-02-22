@@ -15,3 +15,10 @@ export interface IUser {
   isEmailVerified: boolean;
   createdAt: Date;
 }
+
+export interface IPagination {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
