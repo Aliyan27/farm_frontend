@@ -1,10 +1,11 @@
 import type { IExpense } from "@/@types/expenseTypes";
 import { getErrorDataCase } from "@/lib/utils";
-import Home from "@/pages/Home";
+import Expenses from "@/pages/Expenses";
 import {
   createExpenseService,
   deleteExpenseService,
   getAllExpensesService,
+  updateExpenseService,
   type ICreateExpenseBody,
 } from "@/services/expenseService";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -15,6 +16,7 @@ const HomeScreen = () => {
   const [showForm, setShowForm] = useState(false);
   const [expense, setExpenses] = useState<IExpense[]>([]);
   const pageNumber = useRef(1);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     getAllExpenses();
@@ -66,11 +68,27 @@ const HomeScreen = () => {
     }
   };
 
-  const onEdit = async (expense: IExpense) => {
+  const onEdit = async (id: number, expense: IExpense) => {
     try {
+      setIsUpdating(true);
+      let response = await updateExpenseService(id, expense);
+      if (response.message.toLowerCase() === "success") {
+        setExpenses((prev) => {
+          let i = prev.findIndex((expense) => expense.id === id);
+          console.log(i);
+          if (i < 0) {
+            return prev;
+          }
+          prev[i] = expense;
+          return [...prev];
+        });
+        setError("");
+      }
     } catch (error) {
       setError(getErrorDataCase(error));
       console.log(error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -78,10 +96,11 @@ const HomeScreen = () => {
     setShowForm((prev) => !prev);
   }, []);
   return (
-    <Home
+    <Expenses
       showForm={showForm}
       expenses={expense}
       isLoading={isLoading}
+      isUpdating={isUpdating}
       error={error}
       onCreate={onCreate}
       onDelete={onDelete}

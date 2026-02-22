@@ -16,19 +16,22 @@ import FormContainer from "@/components/ui/FormContainer";
 import type { IExpense } from "@/@types/expenseTypes";
 import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
 import { useState } from "react";
+import { EditModal } from "@/components/Modals/EditModal";
+import type { ICreateExpenseBody } from "@/services/expenseService";
 
 interface ExpenseProps {
   showForm: boolean;
   isLoading: boolean;
+  isUpdating: boolean;
   error: string;
   expenses: IExpense[];
-  onCreate: (values: any) => void;
-  onEdit: (expense: IExpense) => void;
+  onCreate: (values: ICreateExpenseBody) => Promise<void>;
+  onEdit: (id: number, expense: IExpense) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
 }
 
-export default function Home(props: ExpenseProps) {
+export default function Expenses(props: ExpenseProps) {
   return (
     <>
       {props.showForm ? (
@@ -64,6 +67,7 @@ export default function Home(props: ExpenseProps) {
             onDelete={props.onDelete}
             onEdit={props.onEdit}
             isLoading={props.isLoading}
+            isUpdating={props.isUpdating}
             error={props.error}
             toggleForm={props.toggleForm}
           />
@@ -76,15 +80,17 @@ export default function Home(props: ExpenseProps) {
 interface ExpensesListProps {
   expenses: IExpense[];
   isLoading: boolean;
-  onEdit: (expense: IExpense) => void;
+  isUpdating: boolean;
+  onEdit: (id: number, expense: IExpense) => Promise<void>;
   onDelete: (id: number) => void;
-  error?: string;
+  error: string;
   toggleForm: () => void;
 }
 
 export function ExpensesList({
   expenses,
   isLoading,
+  isUpdating,
   onEdit,
   onDelete,
   error,
@@ -188,7 +194,9 @@ export function ExpensesList({
             <TableBody>
               {expenses.map((expense) => (
                 <ExpenseItem
+                  isUpdating={isUpdating}
                   expense={expense}
+                  error={error}
                   onDelete={onDelete}
                   onEdit={onEdit}
                 />
@@ -202,14 +210,22 @@ export function ExpensesList({
 }
 
 interface ExpenseItemProps {
+  isUpdating: boolean;
   expense: IExpense;
-
-  onEdit: (expense: IExpense) => void;
+  error: string;
+  onEdit: (id: number, expense: IExpense) => Promise<void>;
   onDelete: (id: number) => void;
 }
 
-const ExpenseItem = ({ expense, onDelete, onEdit }: ExpenseItemProps) => {
+const ExpenseItem = ({
+  expense,
+  isUpdating,
+  error,
+  onDelete,
+  onEdit,
+}: ExpenseItemProps) => {
   const [open, setOpen] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   return (
     <>
       <TableRow key={expense.id} className="hover:bg-muted/30">
@@ -228,7 +244,11 @@ const ExpenseItem = ({ expense, onDelete, onEdit }: ExpenseItemProps) => {
           {expense.notes || "-"}
         </TableCell>
         <TableCell className="text-right space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => onEdit(expense)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setOpenEditModal(true)}
+          >
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -250,6 +270,23 @@ const ExpenseItem = ({ expense, onDelete, onEdit }: ExpenseItemProps) => {
           setOpen(false);
         }}
       />
+      <EditModal
+        title="Edit Expense"
+        desc="Update the expense details below"
+        open={openEditModal}
+        onOpenChange={() => setOpenEditModal((prev) => !prev)}
+      >
+        <ExpenseForm
+          expense={expense}
+          onSubmit={async (values: IExpense) => {
+            await onEdit(expense.id, values);
+            setOpenEditModal(false);
+          }}
+          isLoading={isUpdating}
+          error={error}
+          className="space-y-4"
+        />
+      </EditModal>
     </>
   );
 };

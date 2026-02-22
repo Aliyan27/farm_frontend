@@ -39,6 +39,17 @@ export const createExpenseService = async (values: ICreateExpenseBody) => {
   return data;
 };
 
+export const updateExpenseService = async (id: number, values: IExpense) => {
+  let endpoint = `${ApiNames.expenses}/${id}`;
+  let { data }: { data: IResponse<any> } = await apiRequest(
+    endpoint,
+    RequestMethod.Put,
+    values,
+  );
+
+  return data;
+};
+
 export const deleteExpenseService = async (id: number) => {
   let endpoint = `${ApiNames.expenses}/${id}`;
   let { data }: { data: IResponse<any> } = await apiRequest(

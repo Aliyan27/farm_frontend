@@ -21,7 +21,7 @@ const LoginScreen = () => {
         login(response.data.token);
         globalThis.authToken = response.data.token;
         setError("");
-        navigateTo("/home");
+        navigateTo("/expenses");
       }
     } catch (error) {
       console.log("login error::", error);
