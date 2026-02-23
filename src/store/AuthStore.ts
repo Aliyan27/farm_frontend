@@ -1,4 +1,4 @@
-import type { IUser } from "@/@types";
+import type { IUser } from "@/@types/commonTypes";
 import { create } from "zustand";
 
 interface AuthState {

@@ -3,8 +3,8 @@ import AuthWrapper from "@/components/AuthWrapper";
 import { useState } from "react";
 import { getErrorDataCase } from "@/lib/utils";
 import { useNavigation } from "@/Hooks/useNavigation";
-import { signinService } from "@/services";
 import { useAuthStore } from "@/store/AuthStore";
+import { signinService } from "@/services/commonService";
 
 const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);

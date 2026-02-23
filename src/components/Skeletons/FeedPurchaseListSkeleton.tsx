@@ -1,21 +1,25 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Table } from "lucide-react";
 import {
+  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "@/components/ui/table";
 
 const FeedPurchaseListSkeleton = () => {
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Feed Purchases & Payments</h2>
+      {/* Header with title + button placeholder */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <Skeleton className="h-8 w-64" />{" "}
+        {/* Title: "Feed Purchases & Payments" */}
+        <Skeleton className="h-9 w-40" /> {/* Add button placeholder */}
       </div>
 
-      <div className="border rounded-xl overflow-hidden">
+      {/* Table */}
+      <div className="border rounded-xl overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
@@ -30,31 +34,41 @@ const FeedPurchaseListSkeleton = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {[...Array(5)].map((_, i) => (
+            {[...Array(6)].map((_, i) => (
               <TableRow key={i}>
                 <TableCell>
-                  <Skeleton className="h-5 w-24" />
-                </TableCell>
+                  <Skeleton className="h-5 w-28" />
+                </TableCell>{" "}
+                {/* Date */}
                 <TableCell>
-                  <Skeleton className="h-5 w-16" />
-                </TableCell>
+                  <Skeleton className="h-5 w-20" />
+                </TableCell>{" "}
+                {/* Type badge */}
                 <TableCell>
                   <Skeleton className="h-5 w-32" />
-                </TableCell>
+                </TableCell>{" "}
+                {/* Feed Type */}
                 <TableCell>
                   <Skeleton className="h-5 w-20" />
-                </TableCell>
+                </TableCell>{" "}
+                {/* Farm */}
                 <TableCell>
                   <Skeleton className="h-5 w-12" />
-                </TableCell>
+                </TableCell>{" "}
+                {/* Bags */}
                 <TableCell>
                   <Skeleton className="h-5 w-28" />
-                </TableCell>
+                </TableCell>{" "}
+                {/* Debit */}
                 <TableCell>
                   <Skeleton className="h-5 w-20" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="h-8 w-20 ml-auto" />
+                </TableCell>{" "}
+                {/* Credit */}
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Skeleton className="h-8 w-8" /> {/* Edit icon */}
+                    <Skeleton className="h-8 w-8" /> {/* Delete icon */}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
