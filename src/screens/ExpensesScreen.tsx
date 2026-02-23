@@ -17,17 +17,24 @@ const HomeScreen = () => {
   const [expense, setExpenses] = useState<IExpense[]>([]);
   const pageNumber = useRef(1);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedFarm, setSelectedFarm] = useState<string>("");
 
   useEffect(() => {
     getAllExpenses();
-  }, []);
+  }, [selectedFarm]);
 
   const getAllExpenses = async () => {
     try {
       setIsLoading(true);
-      let response = await getAllExpensesService(pageNumber.current, 10);
+      let filters =
+        selectedFarm.length > 0 ? `&farm=${selectedFarm}` : undefined;
+      let response = await getAllExpensesService(
+        pageNumber.current,
+        10,
+        filters,
+      );
       if (response.message.toLowerCase() === "success") {
-        pageNumber.current += 1;
+        // pageNumber.current += 1;
         setExpenses(response.data.items);
         setError("");
       }
@@ -95,6 +102,10 @@ const HomeScreen = () => {
   const toggleForm = useCallback(() => {
     setShowForm((prev) => !prev);
   }, []);
+
+  const onSelectFarm = useCallback((farm: string) => {
+    setSelectedFarm(farm);
+  }, []);
   return (
     <Expenses
       showForm={showForm}
@@ -102,6 +113,8 @@ const HomeScreen = () => {
       isLoading={isLoading}
       isUpdating={isUpdating}
       error={error}
+      selectedFarm={selectedFarm}
+      onSelectFarm={onSelectFarm}
       onCreate={onCreate}
       onDelete={onDelete}
       onEdit={onEdit}

@@ -35,7 +35,7 @@ export function ConfirmationPoppup(props: ConfirmationPoppupProps) {
             Cancel
           </Button>
           <Button variant="destructive" onClick={() => props.onClick(true)}>
-            "Yes, Delete
+            Yes, Delete
           </Button>
         </DialogFooter>
       </DialogContent>

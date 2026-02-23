@@ -18,6 +18,7 @@ import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
 import { useState } from "react";
 import { EditModal } from "@/components/Modals/EditModal";
 import type { ICreateExpenseBody } from "@/services/expenseService";
+import { cn } from "@/lib/utils";
 
 interface ExpenseProps {
   showForm: boolean;
@@ -25,10 +26,12 @@ interface ExpenseProps {
   isUpdating: boolean;
   error: string;
   expenses: IExpense[];
+  selectedFarm: string;
   onCreate: (values: ICreateExpenseBody) => Promise<void>;
   onEdit: (id: number, expense: IExpense) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
+  onSelectFarm: (farm: string) => void;
 }
 
 export default function Expenses(props: ExpenseProps) {
@@ -70,6 +73,8 @@ export default function Expenses(props: ExpenseProps) {
             isUpdating={props.isUpdating}
             error={props.error}
             toggleForm={props.toggleForm}
+            selectedFarm={props.selectedFarm}
+            onSelectFarm={props.onSelectFarm}
           />
         </div>
       )}
@@ -81,9 +86,11 @@ interface ExpensesListProps {
   expenses: IExpense[];
   isLoading: boolean;
   isUpdating: boolean;
+  error: string;
+  selectedFarm: string;
+  onSelectFarm: (farm: string) => void;
   onEdit: (id: number, expense: IExpense) => Promise<void>;
   onDelete: (id: number) => void;
-  error: string;
   toggleForm: () => void;
 }
 
@@ -91,10 +98,12 @@ export function ExpensesList({
   expenses,
   isLoading,
   isUpdating,
+  selectedFarm,
   onEdit,
   onDelete,
   error,
   toggleForm,
+  onSelectFarm,
 }: ExpensesListProps) {
   if (isLoading) {
     return (
@@ -141,44 +150,47 @@ export function ExpensesList({
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-red-600 font-medium mb-2">
-          Error loading expenses
-        </div>
-        <p className="text-muted-foreground">{error}</p>
-      </div>
-    );
-  }
-
-  if (expenses.length === 0) {
-    return (
-      <div className="text-center py-16 space-y-4">
-        <h2 className="text-2xl font-bold text-muted-foreground">
-          No expenses recorded yet
-        </h2>
-        <p className="text-muted-foreground">
-          Start by adding your first expense using the form above
-        </p>
-        <Button asChild onClick={toggleForm}>
-          <p style={{ cursor: "pointer" }}>Add Expense</p>
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold tracking-tight">Expenses</h2>
-          <Button asChild variant="outline" size="sm" onClick={toggleForm}>
-            <p>Add New Expense</p>
+    <div className="space-y-6">
+      {/* Header + Filter + Add Button */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold tracking-tight">Expenses</h2>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Farm Filter */}
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="farmFilter"
+              className="text-sm font-medium text-muted-foreground"
+            >
+              Farm:
+            </label>
+            <select
+              id="farmFilter"
+              value={selectedFarm}
+              onChange={(e) => onSelectFarm(e.target.value)}
+              className={cn(
+                "h-9 rounded-md border border-input bg-background px-3 py-1 text-sm",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              )}
+            >
+              <option value="">All Farms</option>
+              <option value="MATITAL">MATITAL</option>
+              <option value="KAASI_19">KAASI_19</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </div>
+
+          {/* Add New Button */}
+          <Button variant="outline" size="sm" onClick={toggleForm}>
+            + Add New Expense
           </Button>
         </div>
+      </div>
 
-        <div className="border rounded-xl overflow-hidden shadow-sm">
+      {/* Table */}
+      <div className="border rounded-xl overflow-hidden shadow-sm">
+        {expenses.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
@@ -194,6 +206,7 @@ export function ExpensesList({
             <TableBody>
               {expenses.map((expense) => (
                 <ExpenseItem
+                  key={expense.id}
                   isUpdating={isUpdating}
                   expense={expense}
                   error={error}
@@ -203,9 +216,28 @@ export function ExpensesList({
               ))}
             </TableBody>
           </Table>
-        </div>
+        ) : error.length > 0 ? (
+          <div className="text-center py-12">
+            <div className="text-red-600 font-medium mb-2">
+              Error loading expenses
+            </div>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        ) : (
+          <div className="text-center py-16 space-y-4">
+            <h2 className="text-2xl font-bold text-muted-foreground">
+              No expenses recorded yet
+            </h2>
+            <p className="text-muted-foreground">
+              Start by adding your first expense using the form above
+            </p>
+            <Button asChild onClick={toggleForm}>
+              <p style={{ cursor: "pointer" }}>Add Expense</p>
+            </Button>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
 

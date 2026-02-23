@@ -17,17 +17,24 @@ const FeedScreen = () => {
   const [feedPurchases, setFeedPurchases] = useState<IFeed[]>([]);
   const pageNumber = useRef(1);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedFarm, setSelectedFarm] = useState<string>("");
 
   useEffect(() => {
     getAllFeedPurchases();
-  }, []);
+  }, [selectedFarm]);
 
   const getAllFeedPurchases = async () => {
     try {
       setIsLoading(true);
-      const response = await getAllFeedPurchasesService(pageNumber.current, 10);
+      let filters =
+        selectedFarm.length > 0 ? `&farm=${selectedFarm}` : undefined;
+      const response = await getAllFeedPurchasesService(
+        pageNumber.current,
+        10,
+        filters,
+      );
       if (response.message.toLowerCase() === "success") {
-        pageNumber.current += 1;
+        // pageNumber.current += 1;
         setFeedPurchases(response.data.items);
         setError("");
       }
@@ -93,6 +100,9 @@ const FeedScreen = () => {
     setShowForm((prev) => !prev);
   }, []);
 
+  const onSelectFarm = useCallback((farm: string) => {
+    setSelectedFarm(farm);
+  }, []);
   return (
     <Feed
       showForm={showForm}
@@ -100,6 +110,8 @@ const FeedScreen = () => {
       isLoading={isLoading}
       isUpdating={isUpdating}
       error={error}
+      selectedFarm={selectedFarm}
+      onSelectFarm={onSelectFarm}
       onCreate={onCreate}
       onDelete={onDelete}
       onEdit={onEdit}

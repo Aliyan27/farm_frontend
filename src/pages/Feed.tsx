@@ -12,6 +12,8 @@ interface FeedPurchasesProps {
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
+  selectedFarm: string;
+  onSelectFarm: (farm: string) => void;
 }
 
 export default function Feed(props: FeedPurchasesProps) {
@@ -53,6 +55,8 @@ export default function Feed(props: FeedPurchasesProps) {
             isUpdating={props.isUpdating}
             error={props.error}
             toggleForm={props.toggleForm}
+            selectedFarm={props.selectedFarm}
+            onSelectFarm={props.onSelectFarm}
           />
         </div>
       )}
@@ -75,12 +79,15 @@ import { format } from "date-fns";
 import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
 import { EditModal } from "@/components/Modals/EditModal";
 import { FeedForm } from "@/components/Feed/FeedForm";
+import { cn } from "@/lib/utils";
 
 interface FeedListProps {
   feedPurchases: any[];
   isLoading: boolean;
   isUpdating: boolean;
   error: string;
+  selectedFarm: string;
+  onSelectFarm: (farm: string) => void;
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
@@ -91,6 +98,8 @@ export function FeedList({
   isLoading,
   isUpdating,
   error,
+  selectedFarm,
+  onSelectFarm,
   onEdit,
   onDelete,
   toggleForm,
@@ -155,71 +164,90 @@ export function FeedList({
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-red-600 font-medium mb-2">
-          Error loading feed records
-        </div>
-        <p className="text-muted-foreground">{error}</p>
-      </div>
-    );
-  }
-
-  if (feedPurchases.length === 0) {
-    return (
-      <div className="text-center py-16 space-y-6">
-        <h2 className="text-2xl font-bold text-muted-foreground">
-          No feed purchases recorded yet
-        </h2>
-        <p className="text-muted-foreground">
-          Add your first feed purchase or payment record
-        </p>
-        <Button size="lg" onClick={toggleForm}>
-          + Add Feed Record
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold tracking-tight">
           Feed Purchases & Payments
-        </h2>
-        <Button variant="outline" size="sm" onClick={toggleForm}>
-          Add New Record
-        </Button>
+        </h2>{" "}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="farmFilter"
+              className="text-sm font-medium text-muted-foreground"
+            >
+              Farm:
+            </label>
+            <select
+              id="farmFilter"
+              value={selectedFarm}
+              onChange={(e) => onSelectFarm(e.target.value)}
+              className={cn(
+                "h-9 rounded-md border border-input bg-background px-3 py-1 text-sm",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              )}
+            >
+              <option value="">All Farms</option>
+              <option value="MATITAL">MATITAL</option>
+              <option value="KAASI_19">KAASI_19</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </div>
+          <Button variant="outline" size="sm" onClick={toggleForm}>
+            Add New Record
+          </Button>
+        </div>
       </div>
 
       <div className="border rounded-xl overflow-hidden shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/50">
-              <TableHead>Date</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Feed Type</TableHead>
-              <TableHead>Farm</TableHead>
-              <TableHead>Bags</TableHead>
-              <TableHead>Debit</TableHead>
-              <TableHead>Credit</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {feedPurchases.map((purchase) => (
-              <FeedItem
-                key={purchase.id}
-                purchase={purchase}
-                isUpdating={isUpdating}
-                error={error}
-                onDelete={onDelete}
-                onEdit={onEdit}
-              />
-            ))}
-          </TableBody>
-        </Table>
+        {feedPurchases.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50">
+                <TableHead>Date</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Feed Type</TableHead>
+                <TableHead>Farm</TableHead>
+                <TableHead>Bags</TableHead>
+                <TableHead>Debit</TableHead>
+                <TableHead>Credit</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {feedPurchases.map((purchase) => (
+                <FeedItem
+                  key={purchase.id}
+                  purchase={purchase}
+                  isUpdating={isUpdating}
+                  error={error}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        ) : error.length > 0 ? (
+          <div className="text-center py-12">
+            <div className="text-red-600 font-medium mb-2">
+              Error loading feed records
+            </div>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        ) : (
+          <div className="text-center py-16 space-y-6">
+            <h2 className="text-2xl font-bold text-muted-foreground">
+              No feed purchases recorded yet
+            </h2>
+            <p className="text-muted-foreground">
+              Add your first feed purchase or payment record
+            </p>
+
+            <Button size="lg" onClick={toggleForm}>
+              + Add Feed Record
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -304,8 +332,6 @@ const FeedItem = ({
           }}
           isLoading={isUpdating}
           error={error}
-          submitText="Save Changes"
-          title="Edit Feed Record"
         />
       </EditModal>
     </>
