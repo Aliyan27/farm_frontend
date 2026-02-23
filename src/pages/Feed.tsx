@@ -73,13 +73,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
 import { EditModal } from "@/components/Modals/EditModal";
 import { FeedForm } from "@/components/Feed/FeedForm";
 import { cn } from "@/lib/utils";
+import FeedPurchaseListSkeleton from "@/components/Skeletons/FeedPurchaseListSkeleton";
 
 interface FeedListProps {
   feedPurchases: any[];
@@ -105,63 +105,7 @@ export function FeedList({
   toggleForm,
 }: FeedListProps) {
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Feed Purchases & Payments</h2>
-          <Button variant="outline" size="sm" onClick={toggleForm}>
-            Add New
-          </Button>
-        </div>
-
-        <div className="border rounded-xl overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead>Date</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Feed Type</TableHead>
-                <TableHead>Farm</TableHead>
-                <TableHead>Bags</TableHead>
-                <TableHead>Debit</TableHead>
-                <TableHead>Credit</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {[...Array(5)].map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton className="h-5 w-24" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-16" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-12" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-28" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-20 ml-auto" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-    );
+    return <FeedPurchaseListSkeleton />;
   }
 
   return (
