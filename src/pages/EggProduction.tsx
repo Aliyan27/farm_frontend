@@ -6,31 +6,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
 import { EditModal } from "@/components/Modals/EditModal";
-import { ExpenseForm } from "@/components/Expenses/ExpensesForm";
+import { EggProductionForm } from "@/components/EggProduction/EggProductionForm";
 import { cn } from "@/lib/utils";
-import ExpenseListSkeleton from "@/components/Skeletons/ExpenseListSkeleton";
-import { ExpenseSummaryCard } from "@/components/Expenses/ExpenseSummary"; // ← your new card
-import type { IExpense } from "@/@types/expenseTypes";
-import type { IExpenseSummary } from "@/@types/expenseTypes"; // adjust if needed
+import EggProductionListSkeleton from "@/components/Skeletons/EggProductionListSkeleton";
+import { EggProductionSummaryCard } from "@/components/EggProduction/EggProductionSummary";
+import type {
+  IEggProduction,
+  IEggProductionSummary,
+} from "@/@types/eggProductionTypes";
 import FormContainer from "@/components/ui/FormContainer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ExpenseSummarySkeleton } from "@/components/Skeletons/ExpenseSummarySkeleton";
+import { EggProductionSummarySkeleton } from "@/components/Skeletons/EggProductionSummarySkeleton";
 import { useState } from "react";
 
-interface ExpensesProps {
+interface EggProductionProps {
   showForm: boolean;
   isLoading: boolean;
   isUpdating: boolean;
   error: string;
-  expenses: IExpense[];
-  expenseSummary: IExpenseSummary | null;
+  records: IEggProduction[];
+  summary: IEggProductionSummary | null;
   isLoadingSummary: boolean;
   selectedFarm: string;
   startDate: string;
@@ -38,7 +39,7 @@ interface ExpensesProps {
   pageNumber: number;
   totalPages: number;
   onCreate: (values: any) => Promise<void>;
-  onEdit: (id: number, expense: IExpense) => Promise<void>;
+  onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
   onSelectStartDate: (date: string) => void;
@@ -48,7 +49,7 @@ interface ExpensesProps {
   onPrevClick: () => void;
 }
 
-export default function Expenses(props: ExpensesProps) {
+export default function EggProduction(props: EggProductionProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Summary Section */}
@@ -56,7 +57,7 @@ export default function Expenses(props: ExpensesProps) {
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <h2 className="text-2xl font-bold tracking-tight">
-              Expense Summary
+              Egg Production Summary
             </h2>
 
             {/* Filters */}
@@ -121,13 +122,13 @@ export default function Expenses(props: ExpensesProps) {
             </div>
           </div>
 
-          {props.expenseSummary ? (
-            <ExpenseSummaryCard {...props.expenseSummary} />
+          {props.summary ? (
+            <EggProductionSummaryCard {...props.summary} />
           ) : props.isLoadingSummary ? (
-            <ExpenseSummarySkeleton />
+            <EggProductionSummarySkeleton />
           ) : (
             <div className="text-center py-12 text-muted-foreground">
-              No expense summary available yet
+              No production summary available yet
             </div>
           )}
         </div>
@@ -138,33 +139,32 @@ export default function Expenses(props: ExpensesProps) {
         <section className="max-w-3xl mx-auto p-6">
           <FormContainer
             Header={{
-              title: "Add New Expense",
-              desc: "Record farm expenses (feed, medicine, salaries, rent, etc.)",
+              title: "Add New Egg Production Record",
+              desc: "Record daily egg production for a specific farm",
             }}
             Body={{
-              title: "Expense Details",
-              desc: "Fill in the form below to log a new expense entry",
+              title: "Production Details",
+              desc: "Enter the number of eggs produced today",
             }}
             Footer={{
-              title:
-                "All expenses are tracked securely and used for monthly reports",
+              title: "Daily records help track farm performance over time",
             }}
           >
-            <ExpenseForm
+            <EggProductionForm
               onSubmit={props.onCreate}
               isLoading={props.isLoading}
               error={props.error}
             />
 
             <Button className="mt-6 w-full" onClick={props.toggleForm}>
-              View All Expenses
+              View All Production Records
             </Button>
           </FormContainer>
         </section>
       ) : (
         <section className="max-w-7xl mx-auto p-6">
-          <ExpensesList
-            expenses={props.expenses}
+          <EggProductionList
+            records={props.records}
             onDelete={props.onDelete}
             onEdit={props.onEdit}
             isLoading={props.isLoading}
@@ -182,82 +182,72 @@ export default function Expenses(props: ExpensesProps) {
   );
 }
 
-interface ExpensesListProps {
-  expenses: IExpense[];
+interface EggProductionListProps {
+  records: any[];
   isLoading: boolean;
   isUpdating: boolean;
   error: string;
-  onEdit: (id: number, expense: IExpense) => Promise<void>;
-  onDelete: (id: number) => void;
-  toggleForm: () => void;
   pageNumber: number;
   totalPages: number;
+  onEdit: (id: number, values: any) => Promise<void>;
+  onDelete: (id: number) => void;
+  toggleForm: () => void;
   onNextClick: () => void;
   onPrevClick: () => void;
 }
 
-export function ExpensesList({
-  expenses,
+export function EggProductionList({
+  records,
   isLoading,
   isUpdating,
   error,
-
+  pageNumber,
+  totalPages,
   onEdit,
   onDelete,
   toggleForm,
-  pageNumber,
-  totalPages,
   onNextClick,
   onPrevClick,
-}: ExpensesListProps) {
+}: EggProductionListProps) {
   if (isLoading) {
-    return <ExpenseListSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-red-600 font-medium mb-2">
-          Error loading expenses
-        </div>
-        <p className="text-muted-foreground">{error}</p>
-      </div>
-    );
+    return <EggProductionListSkeleton />;
   }
 
   return (
     <div className="space-y-6">
-      {/* Header + Filter + Add Button */}
+      {/* Header + Add Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">Expenses</h2>
+        <h2 className="text-2xl font-bold tracking-tight">
+          Egg Production Records
+        </h2>
 
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="outline" size="sm" onClick={toggleForm}>
-            + Add New Expense
+            + Add New Record
           </Button>
         </div>
       </div>
 
       {/* Table / Empty / Error */}
       <div className="border rounded-xl overflow-hidden shadow-sm">
-        {expenses.length > 0 ? (
+        {records.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead>Date</TableHead>
-                <TableHead>Head</TableHead>
-                <TableHead>Cost</TableHead>
                 <TableHead>Farm</TableHead>
+                <TableHead>Chicken Eggs</TableHead>
+                <TableHead>Total Eggs</TableHead>
                 <TableHead>Notes</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {expenses.map((expense) => (
-                <ExpenseItem
-                  key={expense.id}
+              {records.map((record) => (
+                <EggProductionItem
+                  key={record.id}
+                  record={record}
                   isUpdating={isUpdating}
-                  expense={expense}
                   error={error}
                   onDelete={onDelete}
                   onEdit={onEdit}
@@ -265,20 +255,29 @@ export function ExpensesList({
               ))}
             </TableBody>
           </Table>
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="text-red-600 font-medium mb-2">
+              Error loading production records
+            </div>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
         ) : (
           <div className="text-center py-16 space-y-6">
             <h2 className="text-2xl font-bold text-muted-foreground">
-              No expenses recorded yet
+              No egg production records yet
             </h2>
-            <p className="text-muted-foreground">Add your first expense</p>
+            <p className="text-muted-foreground">
+              Add your first daily production entry
+            </p>
             <Button size="lg" onClick={toggleForm}>
-              + Add Expense
+              + Add Production Record
             </Button>
           </div>
         )}
       </div>
 
-      {/* Pagination Controls – right below the list */}
+      {/* Pagination Controls */}
       <div className="flex justify-between items-center pt-4">
         <Button
           size="lg"
@@ -304,54 +303,45 @@ export function ExpensesList({
   );
 }
 
-// ExpenseItem (unchanged – included for completeness)
-interface ExpenseItemProps {
+interface EggProductionItemProps {
+  record: any;
   isUpdating: boolean;
-  expense: IExpense;
   error: string;
-  onEdit: (id: number, expense: IExpense) => Promise<void>;
+  onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
 }
 
-const ExpenseItem = ({
-  expense,
+const EggProductionItem = ({
+  record,
   isUpdating,
   error,
-  onDelete,
   onEdit,
-}: ExpenseItemProps) => {
-  const [open, setOpen] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  onDelete,
+}: EggProductionItemProps) => {
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   return (
     <>
-      <TableRow key={expense.id} className="hover:bg-muted/30">
+      <TableRow key={record.id} className="hover:bg-muted/30">
         <TableCell className="font-medium">
-          {format(new Date(expense.expenseDate), "dd MMM yyyy")}
+          {format(new Date(record.date), "dd MMM yyyy")}
         </TableCell>
-        <TableCell>
-          <Badge variant="outline">{expense.head}</Badge>
-        </TableCell>
-        <TableCell className="font-medium">
-          Rs. {expense.expenseCost.toLocaleString()}
-        </TableCell>
-        <TableCell>{expense.farm}</TableCell>
+        <TableCell>{record.farm}</TableCell>
+        <TableCell className="font-medium">{record.chickenEggs}</TableCell>
+        <TableCell className="font-medium">{record.totalEggs}</TableCell>
         <TableCell className="max-w-xs truncate">
-          {expense.notes || "-"}
+          {record.notes || "-"}
         </TableCell>
         <TableCell className="text-right space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setOpenEditModal(true)}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setOpenEdit(true)}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="text-destructive hover:text-destructive/90"
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenDelete(true)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -359,30 +349,29 @@ const ExpenseItem = ({
       </TableRow>
 
       <ConfirmationPoppup
-        open={open}
-        title="Delete Expense"
-        desc="Are you sure you want to delete this expense?"
+        open={openDelete}
+        title="Delete Production Record"
+        desc="Are you sure you want to delete this egg production entry?"
         onClick={async (flag: boolean) => {
-          if (flag) onDelete(expense.id);
-          setOpen(false);
+          if (flag) onDelete(record.id);
+          setOpenDelete(false);
         }}
       />
 
       <EditModal
-        title="Edit Expense"
-        desc="Update the expense details below"
-        open={openEditModal}
-        onOpenChange={() => setOpenEditModal((prev) => !prev)}
+        title="Edit Production Record"
+        desc="Update the egg production details below"
+        open={openEdit}
+        onOpenChange={() => setOpenEdit(false)}
       >
-        <ExpenseForm
-          expense={expense}
+        <EggProductionForm
+          initialValues={record}
           onSubmit={async (values: any) => {
-            await onEdit(expense.id, values);
-            setOpenEditModal(false);
+            await onEdit(record.id, values);
+            setOpenEdit(false);
           }}
           isLoading={isUpdating}
           error={error}
-          className="space-y-4"
         />
       </EditModal>
     </>
