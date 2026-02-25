@@ -1,26 +1,138 @@
-import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Pencil, Trash2 } from "lucide-react";
+import { format } from "date-fns";
+import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
+import { EditModal } from "@/components/Modals/EditModal";
+import { FeedForm } from "@/components/Feed/FeedForm";
+import { cn } from "@/lib/utils";
+import FeedPurchaseListSkeleton from "@/components/Skeletons/FeedPurchaseListSkeleton";
+import { FeedSummaryCard } from "@/components/Feed/FeedSummary";
+import type { IFeed, IFeedSummary } from "@/@types/feedPurchaseTypes";
 import FormContainer from "@/components/ui/FormContainer";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { FeedSummarySkeleton } from "@/components/Skeletons/FeedSummarySkeleton";
 
 interface FeedPurchasesProps {
   showForm: boolean;
   isLoading: boolean;
   isUpdating: boolean;
   error: string;
-  feedPurchases: any[]; // IFeedPurchase[]
+  feedPurchases: IFeed[];
+  feedSummary: IFeedSummary | null;
   onCreate: (values: any) => Promise<void>;
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
   selectedFarm: string;
+  startDate: string;
+  endDate: string;
+  isLoadingSummary: boolean;
+  pageNumber: number;
+  totalPages: number;
+  onSelectStartDate: (date: string) => void;
+  onSelectEndDate: (date: string) => void;
   onSelectFarm: (farm: string) => void;
+  onNextClick: () => void;
+  onPrevClick: () => void;
 }
 
 export default function Feed(props: FeedPurchasesProps) {
   return (
-    <>
+    <div className="min-h-screen bg-background">
+      {/* Summary Section */}
+      <section className="p-6 border-b">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+            <h2 className="text-2xl font-bold tracking-tight">Feed Summary</h2>
+
+            {/* Filters */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Label
+                  htmlFor="startDate"
+                  className="text-sm font-medium text-muted-foreground whitespace-nowrap"
+                >
+                  Start
+                </Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  value={props.startDate}
+                  disabled={props.isLoadingSummary}
+                  onChange={(e) => props.onSelectStartDate(e.target.value)}
+                  className="h-9 w-40"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Label
+                  htmlFor="endDate"
+                  className="text-sm font-medium text-muted-foreground whitespace-nowrap"
+                >
+                  End
+                </Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  disabled={props.isLoadingSummary}
+                  value={props.endDate}
+                  onChange={(e) => props.onSelectEndDate(e.target.value)}
+                  className="h-9 w-40"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Label
+                  htmlFor="farmFilter"
+                  className="text-sm font-medium text-muted-foreground whitespace-nowrap"
+                >
+                  Farm
+                </Label>
+                <select
+                  id="farmFilter"
+                  value={props.selectedFarm}
+                  onChange={(e) => props.onSelectFarm(e.target.value)}
+                  disabled={props.isLoadingSummary}
+                  className={cn(
+                    "h-9 rounded-md border border-input bg-background px-3 py-1 text-sm",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  )}
+                >
+                  <option value="">All Farms</option>
+                  <option value="MATITAL">MATITAL</option>
+                  <option value="KAASI_19">KAASI_19</option>
+                  <option value="OTHER">OTHER</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {props.feedSummary ? (
+            <FeedSummaryCard {...props.feedSummary} />
+          ) : props.isLoadingSummary ? (
+            <FeedSummarySkeleton />
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              No summary data available yet
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Main Content: Form or List */}
       {props.showForm ? (
-        <div className="flex flex-col items-center justify-center min-h-[70vh] p-4">
+        <section className="max-w-3xl mx-auto p-6">
           <FormContainer
             Header={{
               title: "Add New Feed Purchase / Payment",
@@ -40,13 +152,14 @@ export default function Feed(props: FeedPurchasesProps) {
               isLoading={props.isLoading}
               error={props.error}
             />
-            <Button className="my-4 w-full" onClick={props.toggleForm}>
+
+            <Button className="mt-6 w-full" onClick={props.toggleForm}>
               View All Feed Records
             </Button>
           </FormContainer>
-        </div>
+        </section>
       ) : (
-        <div className="min-h-screen bg-background p-4 md:p-6">
+        <section className="max-w-7xl mx-auto p-6">
           <FeedList
             feedPurchases={props.feedPurchases}
             onDelete={props.onDelete}
@@ -54,43 +167,30 @@ export default function Feed(props: FeedPurchasesProps) {
             isLoading={props.isLoading}
             isUpdating={props.isUpdating}
             error={props.error}
+            pageNumber={props.pageNumber}
+            totalPages={props.totalPages}
             toggleForm={props.toggleForm}
-            selectedFarm={props.selectedFarm}
-            onSelectFarm={props.onSelectFarm}
+            onNextClick={props.onNextClick}
+            onPrevClick={props.onPrevClick}
           />
-        </div>
+        </section>
       )}
-    </>
+    </div>
   );
 }
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2 } from "lucide-react";
-import { format } from "date-fns";
-import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
-import { EditModal } from "@/components/Modals/EditModal";
-import { FeedForm } from "@/components/Feed/FeedForm";
-import { cn } from "@/lib/utils";
-import FeedPurchaseListSkeleton from "@/components/Skeletons/FeedPurchaseListSkeleton";
 
 interface FeedListProps {
   feedPurchases: any[];
   isLoading: boolean;
   isUpdating: boolean;
   error: string;
-  selectedFarm: string;
-  onSelectFarm: (farm: string) => void;
+  pageNumber: number;
+  totalPages: number;
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
+  onNextClick: () => void;
+  onPrevClick: () => void;
 }
 
 export function FeedList({
@@ -98,11 +198,13 @@ export function FeedList({
   isLoading,
   isUpdating,
   error,
-  selectedFarm,
-  onSelectFarm,
+  pageNumber,
+  totalPages,
   onEdit,
   onDelete,
   toggleForm,
+  onNextClick,
+  onPrevClick,
 }: FeedListProps) {
   if (isLoading) {
     return <FeedPurchaseListSkeleton />;
@@ -110,39 +212,20 @@ export function FeedList({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Header + Filter + Add Button */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold tracking-tight">
           Feed Purchases & Payments
-        </h2>{" "}
+        </h2>
+
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <label
-              htmlFor="farmFilter"
-              className="text-sm font-medium text-muted-foreground"
-            >
-              Farm:
-            </label>
-            <select
-              id="farmFilter"
-              value={selectedFarm}
-              onChange={(e) => onSelectFarm(e.target.value)}
-              className={cn(
-                "h-9 rounded-md border border-input bg-background px-3 py-1 text-sm",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              )}
-            >
-              <option value="">All Farms</option>
-              <option value="MATITAL">MATITAL</option>
-              <option value="KAASI_19">KAASI_19</option>
-              <option value="OTHER">OTHER</option>
-            </select>
-          </div>
           <Button variant="outline" size="sm" onClick={toggleForm}>
             Add New Record
           </Button>
         </div>
       </div>
 
+      {/* Table / Empty / Error */}
       <div className="border rounded-xl overflow-hidden shadow-sm">
         {feedPurchases.length > 0 ? (
           <Table>
@@ -171,7 +254,7 @@ export function FeedList({
               ))}
             </TableBody>
           </Table>
-        ) : error.length > 0 ? (
+        ) : error ? (
           <div className="text-center py-12">
             <div className="text-red-600 font-medium mb-2">
               Error loading feed records
@@ -186,17 +269,42 @@ export function FeedList({
             <p className="text-muted-foreground">
               Add your first feed purchase or payment record
             </p>
-
             <Button size="lg" onClick={toggleForm}>
               + Add Feed Record
             </Button>
           </div>
         )}
       </div>
+
+      {/* Next Button – right below the list */}
+      <div className="flex justify-between">
+        <Button
+          onClick={onPrevClick}
+          disabled={isLoading || isUpdating || pageNumber > 0}
+          variant="default"
+          size="lg"
+        >
+          Prev Page
+        </Button>
+
+        <span className="text-sm text-muted-foreground">
+          Page {pageNumber} {`of ${totalPages}`}
+        </span>
+
+        <Button
+          onClick={onNextClick}
+          disabled={isLoading || isUpdating || pageNumber <= totalPages}
+          variant="default"
+          size="lg"
+        >
+          Next Page
+        </Button>
+      </div>
     </div>
   );
 }
 
+// FeedItem remains unchanged
 interface FeedItemProps {
   purchase: any;
   isUpdating: boolean;

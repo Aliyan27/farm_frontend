@@ -101,7 +101,11 @@ export function Navbar() {
           </Sheet>
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link
+            to=""
+            className="flex items-center gap-2"
+            onClick={handleLogout}
+          >
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
               F
             </div>

@@ -1,8 +1,12 @@
 import ApiNames from "@/constants/ApiNames";
 import { apiRequest } from "./NetworkService";
 import { RequestMethod } from "@/constants/Method";
-import type { IExpense, IExpenseBody } from "@/@types/expenseTypes";
-import type { IResponse } from "@/@types";
+import type {
+  IExpense,
+  IExpenseBody,
+  IExpenseSummary,
+} from "@/@types/expenseTypes";
+import type { IResponse } from "@/@types/commonTypes";
 
 export const getAllExpensesService = async (
   pageNumber: number,
@@ -55,6 +59,17 @@ export const deleteExpenseService = async (id: number) => {
   let { data }: { data: IResponse<any> } = await apiRequest(
     endpoint,
     RequestMethod.Delete,
+  );
+
+  return data;
+};
+
+export const getExpenseSummaryService = async (filters?: string) => {
+  let endpoint = `${ApiNames.expensesSummary}${filters ? filters : ""}`;
+
+  let { data }: { data: IResponse<IExpenseSummary> } = await apiRequest(
+    endpoint,
+    RequestMethod.Get,
   );
 
   return data;

@@ -1,8 +1,12 @@
 import ApiNames from "@/constants/ApiNames";
 import { apiRequest } from "./NetworkService";
 import { RequestMethod } from "@/constants/Method";
-import type { IFeed, IFeedData } from "@/@types/feedPurchaseTypes";
-import type { IResponse } from "@/@types";
+import type {
+  IFeed,
+  IFeedData,
+  IFeedSummary,
+} from "@/@types/feedPurchaseTypes";
+import type { IResponse } from "@/@types/commonTypes";
 
 // Get all feed purchases (paginated)
 export const getAllFeedPurchasesService = async (
@@ -66,6 +70,17 @@ export const deleteFeedPurchaseService = async (id: number) => {
   let { data }: { data: IResponse<any> } = await apiRequest(
     endpoint,
     RequestMethod.Delete,
+  );
+
+  return data;
+};
+
+export const getFeedSummaryService = async (filters?: string) => {
+  let endpoint = `${ApiNames.feedPurchasesSummary}${filters ? filters : ""}`;
+
+  let { data }: { data: IResponse<IFeedSummary> } = await apiRequest(
+    endpoint,
+    RequestMethod.Get,
   );
 
   return data;

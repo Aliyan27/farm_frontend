@@ -22,3 +22,10 @@ export interface IFeed {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IFeedSummary {
+  totalDebit: number;
+  totalCredit: number;
+  totalBags: number;
+  currentBalance: number;
+}

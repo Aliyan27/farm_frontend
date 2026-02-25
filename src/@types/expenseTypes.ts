@@ -19,3 +19,23 @@ export interface IExpense {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IExpenseSummary {
+  total: number;
+  byHead: ByHead[];
+  byFarm: ByFarm[];
+}
+
+export interface ByFarm {
+  _sum: Sum;
+  farm: string;
+}
+
+export interface Sum {
+  expenseCost: number;
+}
+
+export interface ByHead {
+  _sum: Sum;
+  head: string;
+}

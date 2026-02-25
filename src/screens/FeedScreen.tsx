@@ -3,12 +3,13 @@ import {
   createFeedPurchaseService,
   deleteFeedPurchaseService,
   getAllFeedPurchasesService,
+  getFeedSummaryService,
   updateFeedPurchaseService,
   type IFeedPurchaseBody,
 } from "@/services/feedPurchaseService";
 import { getErrorDataCase } from "@/lib/utils";
 import Feed from "@/pages/Feed";
-import type { IFeed } from "@/@types/feedPurchaseTypes";
+import type { IFeed, IFeedSummary } from "@/@types/feedPurchaseTypes";
 
 const FeedScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,29 +19,53 @@ const FeedScreen = () => {
   const pageNumber = useRef(1);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
+  const [feedSummary, setFeedSummary] = useState<IFeedSummary | null>(null);
+  const [isLoadingSummary, setIsLoadingSummary] = useState(true);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const loadMore = useRef(true);
+  const totalPages = useRef(0);
 
   useEffect(() => {
+    pageNumber.current = 1;
+    loadMore.current = true;
     getAllFeedPurchases();
-  }, [selectedFarm]);
+  }, [selectedFarm, startDate, endDate]);
+
+  useEffect(() => {
+    getSummary(selectedFarm, startDate, endDate);
+  }, [startDate, endDate, selectedFarm]);
 
   const getAllFeedPurchases = async () => {
     try {
+      if (!loadMore.current) return;
       setIsLoading(true);
-      let filters =
-        selectedFarm.length > 0 ? `&farm=${selectedFarm}` : undefined;
+      let filters = "&";
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (start <= end) {
+          filters += `startDate=${startDate}&`;
+          filters += `endDate=${endDate}&`;
+        }
+      }
+      if (selectedFarm) filters += `farm=${selectedFarm}&`;
       const response = await getAllFeedPurchasesService(
         pageNumber.current,
         10,
-        filters,
+        filters.length > 1 ? filters : undefined,
       );
       if (response.message.toLowerCase() === "success") {
-        // pageNumber.current += 1;
+        loadMore.current =
+          response.data.pagination.pages < pageNumber.current &&
+          response.data.pagination.pages > 0;
+        totalPages.current = response.data.pagination.pages;
         setFeedPurchases(response.data.items);
         setError("");
       }
     } catch (error) {
       setError(getErrorDataCase(error));
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +81,6 @@ const FeedScreen = () => {
       }
     } catch (error) {
       setError(getErrorDataCase(error));
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +95,6 @@ const FeedScreen = () => {
       }
     } catch (error) {
       setError(getErrorDataCase(error));
-      console.log(error);
     }
   };
 
@@ -90,9 +113,46 @@ const FeedScreen = () => {
       }
     } catch (error) {
       setError(getErrorDataCase(error));
-      console.log(error);
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const getSummary = async (
+    farm?: string,
+    startDate?: string,
+    endDate?: string,
+  ) => {
+    try {
+      setIsLoadingSummary(true);
+      let filters = "?";
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (start <= end) {
+          filters += `startDate=${startDate}&`;
+          filters += `endDate=${endDate}&`;
+        }
+      }
+      if (farm) filters += `farm=${farm}&`;
+
+      if (filters.length > 1 && filters.endsWith("&")) {
+        filters = filters.slice(0, -1);
+      }
+
+      const response = await getFeedSummaryService(
+        filters.length > 1 ? filters : undefined,
+      );
+
+      if (response.message.toLowerCase() === "success") {
+        setFeedSummary(response.data);
+        setError("");
+      }
+    } catch (error) {
+      setError(getErrorDataCase(error));
+    } finally {
+      setIsLoadingSummary(false);
     }
   };
 
@@ -103,6 +163,27 @@ const FeedScreen = () => {
   const onSelectFarm = useCallback((farm: string) => {
     setSelectedFarm(farm);
   }, []);
+
+  const onSelectStartDate = useCallback((date: string) => {
+    setStartDate(date);
+  }, []);
+
+  const onSelectEndDate = useCallback((date: string) => {
+    setEndDate(date);
+  }, []);
+
+  const onNextClick = useCallback(() => {
+    pageNumber.current += 1;
+    loadMore.current = pageNumber.current <= totalPages.current;
+    getAllFeedPurchases();
+  }, [pageNumber.current]);
+
+  const onPrevClick = useCallback(() => {
+    pageNumber.current -= 1;
+    loadMore.current = pageNumber.current > 0;
+    getAllFeedPurchases();
+  }, [pageNumber.current]);
+
   return (
     <Feed
       showForm={showForm}
@@ -110,12 +191,22 @@ const FeedScreen = () => {
       isLoading={isLoading}
       isUpdating={isUpdating}
       error={error}
+      feedSummary={feedSummary}
       selectedFarm={selectedFarm}
+      startDate={startDate}
+      endDate={endDate}
+      isLoadingSummary={isLoadingSummary}
+      pageNumber={pageNumber.current}
+      totalPages={totalPages.current}
+      onSelectStartDate={onSelectStartDate}
+      onSelectEndDate={onSelectEndDate}
       onSelectFarm={onSelectFarm}
       onCreate={onCreate}
       onDelete={onDelete}
       onEdit={onEdit}
       toggleForm={toggleForm}
+      onNextClick={onNextClick}
+      onPrevClick={onPrevClick}
     />
   );
 };

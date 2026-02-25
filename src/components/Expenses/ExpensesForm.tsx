@@ -8,14 +8,10 @@ import { useEffect } from "react";
 import { Textarea } from "../ui/TextArea";
 import type { IExpense } from "@/@types/expenseTypes";
 
-// Shared validation schema (matches your Zod schema)
 const validationSchema = Yup.object({
   expenseDate: Yup.date()
     .required("Expense date is required")
     .typeError("Invalid date format"),
-  month: Yup.string()
-    .length(3, "Month must be 3 characters (e.g. Jan)")
-    .optional(),
   challan: Yup.string().optional(),
   transId: Yup.string().optional(),
   farm: Yup.string()
@@ -67,7 +63,7 @@ interface ExpenseFormProps {
 export function ExpenseForm(props: ExpenseFormProps) {
   const formik = useFormik({
     initialValues: {
-      expenseDate: props?.expense?.expenseDate.toString() || "",
+      expenseDate: props?.expense?.expenseDate?.toString() || "",
       month: props?.expense?.month || "",
       challan: props?.expense?.challan || "",
       transId: props?.expense?.transId || "",
@@ -77,18 +73,17 @@ export function ExpenseForm(props: ExpenseFormProps) {
       notes: props?.expense?.notes || "",
     },
     validationSchema,
-    enableReinitialize: true, // ← updates form when initialValues change (important for edit)
+    enableReinitialize: true,
     onSubmit: async (values) => {
       console.log("Submitting expense:", values);
       await props.onSubmit(values);
-      formik.resetForm(); // reset after success
+      formik.resetForm();
     },
   });
 
-  // Optional: log or handle success
   useEffect(() => {
     if (!props.isLoading && !props.error && formik.submitCount > 0) {
-      // Modal can close here if parent handles it
+      // Optional: handle success (e.g. close modal from parent)
     }
   }, [props.isLoading, props.error, formik.submitCount]);
 
@@ -115,28 +110,6 @@ export function ExpenseForm(props: ExpenseFormProps) {
               {typeof formik.errors.expenseDate === "string"
                 ? formik.errors.expenseDate
                 : "Invalid date"}
-            </p>
-          )}
-        </Field>
-
-        {/* Month */}
-        <Field>
-          <FieldLabel htmlFor="month">Month (optional)</FieldLabel>
-          <Input
-            id="month"
-            name="month"
-            placeholder="Jan"
-            maxLength={3}
-            value={formik.values.month}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            disabled={props.isLoading}
-          />
-          {formik.touched.month && formik.errors.month && (
-            <p className="text-xs text-red-600 mt-1">
-              {typeof formik.errors.month === "string"
-                ? formik.errors.month
-                : "Invalid month"}
             </p>
           )}
         </Field>
@@ -170,7 +143,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
           </Field>
         </div>
 
-        {/* Farm */}
+        {/* Farm – already a select */}
         <Field>
           <FieldLabel htmlFor="farm">Farm</FieldLabel>
           <select
@@ -220,7 +193,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
           )}
         </Field>
 
-        {/* Head */}
+        {/* Head – already a select */}
         <Field>
           <FieldLabel htmlFor="head">Expense Head</FieldLabel>
           <select
@@ -260,7 +233,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
               "OTHER",
             ].map((h) => (
               <option key={h} value={h}>
-                {h}
+                {h.replace(/_/g, " ")} {/* optional: make display nicer */}
               </option>
             ))}
           </select>
@@ -308,7 +281,7 @@ export function ExpenseForm(props: ExpenseFormProps) {
           </Button>
         </div>
 
-        {/* Error */}
+        {/* Server-side error */}
         {props.error && (
           <p className="text-sm text-red-600 text-center mt-3">{props.error}</p>
         )}
