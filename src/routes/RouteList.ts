@@ -4,6 +4,7 @@ import SignupScreen from "@/screens/SignupScreen";
 import FeedScreen from "@/screens/FeedScreen";
 import RouteNames from "./RouteNames";
 import EggProductionScreen from "@/screens/EggProductionScreen";
+import EggSaleScreen from "@/screens/EggSaleScreen";
 
 const RouteList = [
   { path: RouteNames.login, element: LoginScreen, isPublic: true },
@@ -13,6 +14,11 @@ const RouteList = [
   {
     path: RouteNames.eggProduction,
     element: EggProductionScreen,
+    isPublic: false,
+  },
+  {
+    path: RouteNames.eggSale,
+    element: EggSaleScreen,
     isPublic: false,
   },
 ];

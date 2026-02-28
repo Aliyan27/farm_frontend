@@ -5,10 +5,8 @@ import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Textarea } from "../ui/TextArea";
+import type { IFeed } from "@/@types/feedPurchaseTypes";
 
-// ────────────────────────────────────────────────
-// Validation Schema
-// ────────────────────────────────────────────────
 const validationSchema = Yup.object({
   date: Yup.date()
     .required("Date is required")
@@ -33,7 +31,7 @@ const validationSchema = Yup.object({
 
 interface FeedFormProps {
   className?: string;
-  initialValues?: any;
+  initialValues?: IFeed;
   onSubmit: (values: any) => Promise<void>;
   isLoading: boolean;
   error: string;
@@ -41,14 +39,16 @@ interface FeedFormProps {
 
 export function FeedForm({
   className,
-  initialValues = {},
+  initialValues,
   onSubmit,
   isLoading,
   error,
 }: FeedFormProps) {
   const formik = useFormik({
     initialValues: {
-      date: initialValues?.date?.toString() || "",
+      date: initialValues?.date
+        ? new Date(initialValues?.date).toISOString().split("T")[0]
+        : "",
       voucherType: initialValues?.voucherType || "",
       feedType: initialValues?.feedType || "",
       farm: initialValues?.farm || "",
@@ -69,20 +69,15 @@ export function FeedForm({
   });
 
   // Helper to render field errors safely
-  const renderError = (fieldName: keyof typeof formik.errors) => {
-    const err = formik.errors[fieldName];
-    const touched = formik.touched[fieldName];
-
-    if (!touched || !err) return null;
-
-    const message =
-      typeof err === "string"
-        ? err
-        : Array.isArray(err)
-          ? err.join(", ")
-          : "Invalid value";
-
-    return <p className="text-xs text-red-600 mt-1">{message}</p>;
+  const renderError = (field: keyof typeof formik.errors) => {
+    if (formik.touched[field] && formik.errors[field]) {
+      return (
+        <p className="text-xs text-red-600 mt-1">
+          {formik.errors[field] as string}
+        </p>
+      );
+    }
+    return null;
   };
 
   return (

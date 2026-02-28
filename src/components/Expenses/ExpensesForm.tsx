@@ -63,7 +63,9 @@ interface ExpenseFormProps {
 export function ExpenseForm(props: ExpenseFormProps) {
   const formik = useFormik({
     initialValues: {
-      expenseDate: props?.expense?.expenseDate?.toString() || "",
+      expenseDate: props.expense?.expenseDate
+        ? new Date(props.expense?.expenseDate).toISOString().split("T")[0]
+        : "",
       month: props?.expense?.month || "",
       challan: props?.expense?.challan || "",
       transId: props?.expense?.transId || "",

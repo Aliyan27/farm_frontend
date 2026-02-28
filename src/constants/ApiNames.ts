@@ -7,6 +7,8 @@ const ApiNames = {
   expensesSummary: "/expenses/summary",
   eggProductions: "/egg-productions",
   eggProductionsSummary: "/egg-productions/summary",
+  eggSales: "/egg-sales",
+  eggSalesSummary: "/egg-sales/summary",
 };
 
 export default ApiNames;

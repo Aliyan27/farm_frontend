@@ -53,7 +53,9 @@ export function EggProductionForm({
 }: EggProductionFormProps) {
   const formik = useFormik({
     initialValues: {
-      date: initialValues.date || "",
+      date: initialValues.date
+        ? new Date(initialValues?.date).toISOString().split("T")[0]
+        : "",
       farm: initialValues.farm || "",
       chickenEggs: initialValues.chickenEggs || "",
       totalEggs: initialValues.totalEggs || "",
@@ -114,7 +116,6 @@ export function EggProductionForm({
             <SelectContent>
               <SelectItem value="KAASI_19">KAASI_19</SelectItem>
               <SelectItem value="MATITAL">MATITAL</SelectItem>
-              <SelectItem value="COMBINED">COMBINED</SelectItem>
               <SelectItem value="OTHER">OTHER</SelectItem>
             </SelectContent>
           </Select>

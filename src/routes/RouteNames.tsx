@@ -4,6 +4,7 @@ const RouteNames = {
   expenses: "/expenses",
   feedPurchase: "/feed-purchase",
   eggProduction: "/egg-production",
+  eggSale: "/egg-sales",
 };
 
 export default RouteNames;
