@@ -19,6 +19,16 @@ const protectedRoute = (element: JSX.Element) => {
   return element;
 };
 
+const publicRoute = (element: JSX.Element) => {
+  const { isAuthenticated } = useAuthStore();
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return element;
+};
+
 const InitiateRoute = () => {
   return (
     <>
@@ -30,7 +40,7 @@ const InitiateRoute = () => {
                 <Route
                   key={`route-${index}`}
                   path={route.path}
-                  element={<route.element />}
+                  element={publicRoute(<route.element />)}
                 />
               );
             }
@@ -49,7 +59,7 @@ const InitiateRoute = () => {
             );
           })}
 
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </>

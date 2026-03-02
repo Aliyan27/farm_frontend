@@ -5,6 +5,9 @@ import FeedScreen from "@/screens/FeedScreen";
 import RouteNames from "./RouteNames";
 import EggProductionScreen from "@/screens/EggProductionScreen";
 import EggSaleScreen from "@/screens/EggSaleScreen";
+import SalaryScreen from "@/screens/SalaryScreen";
+import IncomeStatementScreen from "@/screens/ReportScreen";
+import DashboardScreen from "@/screens/DashboardScreen";
 
 const RouteList = [
   { path: RouteNames.login, element: LoginScreen, isPublic: true },
@@ -19,6 +22,21 @@ const RouteList = [
   {
     path: RouteNames.eggSale,
     element: EggSaleScreen,
+    isPublic: false,
+  },
+  {
+    path: RouteNames.salaries,
+    element: SalaryScreen,
+    isPublic: false,
+  },
+  {
+    path: RouteNames.report,
+    element: IncomeStatementScreen,
+    isPublic: false,
+  },
+  {
+    path: RouteNames.dashboard,
+    element: DashboardScreen,
     isPublic: false,
   },
 ];

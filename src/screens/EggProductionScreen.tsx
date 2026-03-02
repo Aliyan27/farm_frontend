@@ -45,12 +45,11 @@ const EggProductionScreen = () => {
       setIsLoading(true);
       let filters = `&`;
 
-      if (startDate && endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        if (start <= end) {
-          filters += `&startDate=${startDate}&endDate=${endDate}`;
-        }
+      if (startDate?.trim()) {
+        filters += `&startDate=${encodeURIComponent(startDate.trim())}`;
+      }
+      if (endDate?.trim()) {
+        filters += `&endDate=${encodeURIComponent(endDate.trim())}`;
       }
       if (selectedFarm) filters += `&farm=${selectedFarm}`;
 

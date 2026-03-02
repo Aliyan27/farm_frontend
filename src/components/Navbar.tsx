@@ -54,7 +54,7 @@ export function Navbar() {
                 <h2 className="text-lg font-bold mb-6">Menu</h2>
                 <nav className="space-y-2">
                   <Link
-                    to="/"
+                    to={RouteNames.dashboard}
                     className="block py-2 text-muted-foreground hover:text-foreground"
                   >
                     Dashboard
@@ -72,25 +72,25 @@ export function Navbar() {
                     Feed Purchases
                   </Link>
                   <Link
-                    to="/egg-production"
+                    to={RouteNames.eggProduction}
                     className="block py-2 text-muted-foreground hover:text-foreground"
                   >
                     Egg Production
                   </Link>
                   <Link
-                    to="/egg-sales"
+                    to={RouteNames.eggSale}
                     className="block py-2 text-muted-foreground hover:text-foreground"
                   >
                     Egg Sales
                   </Link>
                   <Link
-                    to="/salaries"
+                    to={RouteNames.salaries}
                     className="block py-2 text-muted-foreground hover:text-foreground"
                   >
                     Salaries
                   </Link>
                   <Link
-                    to="/reports"
+                    to={RouteNames.report}
                     className="block py-2 text-muted-foreground hover:text-foreground"
                   >
                     Reports

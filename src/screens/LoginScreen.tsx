@@ -16,12 +16,11 @@ const LoginScreen = () => {
     try {
       setIsLoading(true);
       let response = await signinService(email, password);
-      console.log(response);
       if (response.message.toLowerCase() === "success") {
         login(response.data.token);
         globalThis.authToken = response.data.token;
         setError("");
-        navigateTo("/expenses");
+        navigateTo("/");
       }
     } catch (error) {
       console.log("login error::", error);

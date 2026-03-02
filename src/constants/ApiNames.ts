@@ -9,6 +9,13 @@ const ApiNames = {
   eggProductionsSummary: "/egg-productions/summary",
   eggSales: "/egg-sales",
   eggSalesSummary: "/egg-sales/summary",
+  salaries: "/salaries",
+  salariesSummary: "/salaries/summary",
+  incomeStatement: "/reports/income-statement",
+  dashboardFeedPurchase: "/dashboard/feed-purchases",
+  dashboardExpenses: "/dashboard/expenses",
+  dashboardEggProductions: "/dashboard/egg-productions",
+  dashboardEggSales: "/dashboard/egg-sales",
 };
 
 export default ApiNames;

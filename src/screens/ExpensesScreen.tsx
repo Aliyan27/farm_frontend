@@ -131,13 +131,11 @@ const HomeScreen = () => {
       setIsLoadingSummary(true);
       let filters = "?";
 
-      if (startDate && endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        if (start <= end) {
-          filters += `startDate=${startDate}&`;
-          filters += `endDate=${endDate}&`;
-        }
+      if (startDate?.trim()) {
+        filters += `&startDate=${encodeURIComponent(startDate.trim())}`;
+      }
+      if (endDate?.trim()) {
+        filters += `&endDate=${encodeURIComponent(endDate.trim())}`;
       }
       if (farm) filters += `farm=${farm}&`;
 

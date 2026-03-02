@@ -293,7 +293,12 @@ export function FeedList({
 
         <Button
           onClick={onNextClick}
-          disabled={isLoading || isUpdating || pageNumber <= totalPages}
+          disabled={
+            isLoading ||
+            isUpdating ||
+            pageNumber <= totalPages ||
+            error.length > 0
+          }
           variant="default"
           size="lg"
         >

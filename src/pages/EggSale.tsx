@@ -292,7 +292,12 @@ export function EggSaleList({
 
         <Button
           size="lg"
-          disabled={isLoading || isUpdating || pageNumber >= totalPages}
+          disabled={
+            isLoading ||
+            isUpdating ||
+            pageNumber >= totalPages ||
+            error.length > 0
+          }
           onClick={onNextClick}
         >
           Next Page

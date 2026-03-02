@@ -1,59 +1,74 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  createEggSaleService,
-  deleteEggSaleService,
-  getAllEggSalesService,
-  getEggSaleSummaryService,
-  updateEggSaleService,
-} from "@/services/eggSaleService";
+  createSalaryService,
+  deleteSalaryService,
+  getAllSalariesService,
+  getSalarySummaryService,
+  updateSalaryService,
+} from "@/services/salaryService";
 import { getErrorDataCase } from "@/lib/utils";
-import EggSale from "@/pages/EggSale";
-import type {
-  ICreateEggSaleBody,
-  IEggSale,
-  IEggSaleSummary,
-} from "@/@types/eggSaleTypes";
+import Salary from "@/pages/Salary";
+import type { ISalary, ISalarySummary } from "@/@types/salaryTypes";
 
-const EggSaleScreen = () => {
+const SalaryScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [sales, setSales] = useState<IEggSale[]>([]);
+  const [salaries, setSalaries] = useState<ISalary[]>([]);
   const pageNumber = useRef(1);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedFarm, setSelectedFarm] = useState<string>("");
-  const [summary, setSummary] = useState<IEggSaleSummary | null>(null);
+  const [summary, setSummary] = useState<ISalarySummary | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const loadMore = useRef(true);
   const totalPages = useRef(0);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounce search input
+  useEffect(() => {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [search]);
 
   useEffect(() => {
     pageNumber.current = 1;
     loadMore.current = true;
-    getAllEggSales();
-  }, [selectedFarm, startDate, endDate]);
+    getAllSalaries(selectedFarm, debouncedSearch);
+  }, [selectedFarm]);
 
   useEffect(() => {
-    getSummary(selectedFarm, startDate, endDate);
-  }, [selectedFarm, startDate, endDate]);
+    if (debouncedSearch.length > 0) {
+      pageNumber.current = 1;
+      loadMore.current = true;
+      getAllSalaries(selectedFarm, debouncedSearch);
+    }
+  }, [debouncedSearch]);
 
-  const getAllEggSales = async () => {
+  useEffect(() => {
+    getSummary(selectedFarm);
+  }, [selectedFarm]);
+
+  const getAllSalaries = async (farm?: string, searchTerm?: string) => {
     try {
       if (!loadMore.current) return;
       setIsLoading(true);
       let filters = `&`;
 
-      if (startDate?.trim()) {
-        filters += `&startDate=${encodeURIComponent(startDate.trim())}`;
-      }
-      if (endDate?.trim()) {
-        filters += `&endDate=${encodeURIComponent(endDate.trim())}`;
-      }
-      if (selectedFarm) filters += `&farm=${selectedFarm}`;
+      if (searchTerm) filters += `&search=${encodeURIComponent(searchTerm)}`;
+      if (farm) filters += `&farm=${farm}`;
 
-      const response = await getAllEggSalesService(
+      const response = await getAllSalariesService(
         pageNumber.current,
         10,
         filters.length > 1 ? filters : undefined,
@@ -64,7 +79,7 @@ const EggSaleScreen = () => {
           pageNumber.current < response.data.pagination.pages &&
           response.data.pagination.pages > 0;
         totalPages.current = response.data.pagination.pages;
-        setSales(response.data.items);
+        setSalaries(response.data.items);
         setError("");
       }
     } catch (error) {
@@ -74,12 +89,12 @@ const EggSaleScreen = () => {
     }
   };
 
-  const onCreate = async (values: ICreateEggSaleBody) => {
+  const onCreate = async (values: any) => {
     try {
       setIsLoading(true);
-      const response = await createEggSaleService(values);
+      const response = await createSalaryService(values);
       if (response.message.toLowerCase() === "success") {
-        setSales((prev) => [...prev, response.data]);
+        setSalaries((prev) => [...prev, response.data]);
         setError("");
       }
     } catch (error) {
@@ -91,9 +106,9 @@ const EggSaleScreen = () => {
 
   const onDelete = async (id: number) => {
     try {
-      const response = await deleteEggSaleService(id);
+      const response = await deleteSalaryService(id);
       if (response.message.toLowerCase() === "success") {
-        setSales((prev) => prev.filter((item) => item.id !== id));
+        setSalaries((prev) => prev.filter((item) => item.id !== id));
         setError("");
       }
     } catch (error) {
@@ -101,15 +116,29 @@ const EggSaleScreen = () => {
     }
   };
 
-  const onEdit = async (id: number, updatedSale: IEggSale) => {
+  const onEdit = async (id: number, updatedSalary: ISalary) => {
     try {
       setIsUpdating(true);
-      const response = await updateEggSaleService(id, updatedSale);
+
+      const updateValues = {
+        date: updatedSalary.date,
+        month: updatedSalary.month ?? undefined,
+        employeeName: updatedSalary.employeeName,
+        designation: updatedSalary.designation,
+        farm: updatedSalary.farm ?? undefined,
+        total: updatedSalary.total,
+        advance: updatedSalary.advance,
+        salaryAmount: updatedSalary.salaryAmount,
+        remarks: updatedSalary.remarks ?? undefined,
+      };
+
+      const response = await updateSalaryService(id, updateValues);
+
       if (response.message.toLowerCase() === "success") {
-        setSales((prev) => {
+        setSalaries((prev) => {
           const index = prev.findIndex((item) => item.id === id);
           if (index < 0) return prev;
-          prev[index] = { ...prev[index], ...updatedSale };
+          prev[index] = { ...prev[index], ...updatedSalary };
           return [...prev];
         });
         setError("");
@@ -121,30 +150,13 @@ const EggSaleScreen = () => {
     }
   };
 
-  const getSummary = async (
-    farm?: string,
-    startDate?: string,
-    endDate?: string,
-  ) => {
+  const getSummary = async (farm?: string) => {
     try {
       setIsLoadingSummary(true);
       let filters = "?";
+      if (farm) filters += `farm=${farm}`;
 
-      if (startDate && endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        if (start <= end) {
-          filters += `startDate=${startDate}&`;
-          filters += `endDate=${endDate}&`;
-        }
-      }
-      if (farm) filters += `farm=${farm}&`;
-
-      if (filters.length > 1 && filters.endsWith("&")) {
-        filters = filters.slice(0, -1);
-      }
-
-      const response = await getEggSaleSummaryService(
+      const response = await getSalarySummaryService(
         filters.length > 1 ? filters : undefined,
       );
 
@@ -167,42 +179,36 @@ const EggSaleScreen = () => {
     setSelectedFarm(farm);
   }, []);
 
-  const onSelectStartDate = useCallback((date: string) => {
-    setStartDate(date);
-  }, []);
-
-  const onSelectEndDate = useCallback((date: string) => {
-    setEndDate(date);
+  const onSearchChange = useCallback((value: string) => {
+    setSearch(value);
   }, []);
 
   const onNextClick = useCallback(() => {
     pageNumber.current += 1;
     loadMore.current = pageNumber.current <= totalPages.current;
-    getAllEggSales();
-  }, []);
+    getAllSalaries(selectedFarm, debouncedSearch);
+  }, [selectedFarm, debouncedSearch]);
 
   const onPrevClick = useCallback(() => {
     pageNumber.current -= 1;
     loadMore.current = pageNumber.current > 0;
-    getAllEggSales();
-  }, []);
+    getAllSalaries(selectedFarm, debouncedSearch);
+  }, [selectedFarm, debouncedSearch]);
 
   return (
-    <EggSale
+    <Salary
       showForm={showForm}
-      sales={sales}
+      salaries={salaries}
       isLoading={isLoading}
       isUpdating={isUpdating}
       error={error}
       summary={summary}
       selectedFarm={selectedFarm}
-      startDate={startDate}
-      endDate={endDate}
+      search={search}
       isLoadingSummary={isLoadingSummary}
       pageNumber={pageNumber.current}
       totalPages={totalPages.current}
-      onSelectStartDate={onSelectStartDate}
-      onSelectEndDate={onSelectEndDate}
+      onSearch={onSearchChange}
       onSelectFarm={onSelectFarm}
       onCreate={onCreate}
       onDelete={onDelete}
@@ -214,4 +220,4 @@ const EggSaleScreen = () => {
   );
 };
 
-export default EggSaleScreen;
+export default SalaryScreen;

@@ -6,6 +6,7 @@ interface AuthState {
   token: string | null;
   user: IUser | null;
 
+  setToken: (token: string) => void;
   login: (token: string) => void;
   logout: () => void;
   setUser: (user: IUser) => void;
@@ -26,6 +27,13 @@ export const useAuthStore = create<AuthState>()((set) => ({
   isAuthenticated: !!getInitialAuthState().token,
   token: getInitialAuthState().token,
   user: getInitialAuthState().user,
+
+  setToken: (token: string) => {
+    set({
+      isAuthenticated: true,
+      token,
+    });
+  },
 
   login: (token: string) => {
     localStorage.setItem("authToken", token);

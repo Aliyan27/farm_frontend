@@ -66,7 +66,6 @@ export function ExpenseForm(props: ExpenseFormProps) {
       expenseDate: props.expense?.expenseDate
         ? new Date(props.expense?.expenseDate).toISOString().split("T")[0]
         : "",
-      month: props?.expense?.month || "",
       challan: props?.expense?.challan || "",
       transId: props?.expense?.transId || "",
       farm: props?.expense?.farm || "",

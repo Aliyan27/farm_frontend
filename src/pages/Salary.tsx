@@ -6,49 +6,45 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationPoppup } from "@/components/Modals/ConfirmationPoppup";
 import { EditModal } from "@/components/Modals/EditModal";
-import { ExpenseForm } from "@/components/Expenses/ExpensesForm";
+import { SalaryForm } from "@/components/Salary/SalaryForm";
 import { cn } from "@/lib/utils";
-import ExpenseListSkeleton from "@/components/Skeletons/ExpenseListSkeleton";
-import { ExpenseSummaryCard } from "@/components/Expenses/ExpenseSummary"; // ← your new card
-import type { IExpense } from "@/@types/expenseTypes";
-import type { IExpenseSummary } from "@/@types/expenseTypes"; // adjust if needed
+import SalaryListSkeleton from "@/components/Skeletons/SalaryListSkeleton";
+import { SalarySummaryCard } from "@/components/Salary/SalarySummary";
+import type { ISalary, ISalarySummary } from "@/@types/salaryTypes";
 import FormContainer from "@/components/ui/FormContainer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ExpenseSummarySkeleton } from "@/components/Skeletons/ExpenseSummarySkeleton";
+import { SalarySummarySkeleton } from "@/components/Skeletons/SalarySummarySkeleton";
 import { useState } from "react";
 
-interface ExpensesProps {
+interface SalaryProps {
   showForm: boolean;
   isLoading: boolean;
   isUpdating: boolean;
   error: string;
-  expenses: IExpense[];
-  expenseSummary: IExpenseSummary | null;
+  salaries: ISalary[];
+  summary: ISalarySummary | null;
   isLoadingSummary: boolean;
   selectedFarm: string;
-  startDate: string;
-  endDate: string;
+  search: string;
   pageNumber: number;
   totalPages: number;
   onCreate: (values: any) => Promise<void>;
-  onEdit: (id: number, expense: IExpense) => Promise<void>;
+  onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
   toggleForm: () => void;
-  onSelectStartDate: (date: string) => void;
-  onSelectEndDate: (date: string) => void;
+  onSearch: (date: string) => void;
   onSelectFarm: (farm: string) => void;
   onNextClick: () => void;
   onPrevClick: () => void;
 }
 
-export default function Expenses(props: ExpensesProps) {
+export default function Salary(props: SalaryProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Summary Section */}
@@ -56,45 +52,11 @@ export default function Expenses(props: ExpensesProps) {
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <h2 className="text-2xl font-bold tracking-tight">
-              Expense Summary
+              Salary Summary
             </h2>
 
             {/* Filters */}
             <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Label
-                  htmlFor="startDate"
-                  className="text-sm font-medium text-muted-foreground whitespace-nowrap"
-                >
-                  Start
-                </Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={props.startDate}
-                  disabled={props.isLoadingSummary}
-                  onChange={(e) => props.onSelectStartDate(e.target.value)}
-                  className="h-9 w-40"
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Label
-                  htmlFor="endDate"
-                  className="text-sm font-medium text-muted-foreground whitespace-nowrap"
-                >
-                  End
-                </Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={props.endDate}
-                  disabled={props.isLoadingSummary}
-                  onChange={(e) => props.onSelectEndDate(e.target.value)}
-                  className="h-9 w-40"
-                />
-              </div>
-
               <div className="flex items-center gap-2">
                 <Label
                   htmlFor="farmFilter"
@@ -121,13 +83,13 @@ export default function Expenses(props: ExpensesProps) {
             </div>
           </div>
 
-          {props.expenseSummary ? (
-            <ExpenseSummaryCard {...props.expenseSummary} />
+          {props.summary ? (
+            <SalarySummaryCard {...props.summary} />
           ) : props.isLoadingSummary ? (
-            <ExpenseSummarySkeleton />
+            <SalarySummarySkeleton />
           ) : (
             <div className="text-center py-12 text-muted-foreground">
-              No expense summary available yet
+              No salary summary available yet
             </div>
           )}
         </div>
@@ -138,41 +100,42 @@ export default function Expenses(props: ExpensesProps) {
         <section className="max-w-3xl mx-auto p-6">
           <FormContainer
             Header={{
-              title: "Add New Expense",
-              desc: "Record farm expenses (feed, medicine, salaries, rent, etc.)",
+              title: "Add New Salary Record",
+              desc: "Record salary payments, advances, or adjustments",
             }}
             Body={{
-              title: "Expense Details",
-              desc: "Fill in the form below to log a new expense entry",
+              title: "Salary Details",
+              desc: "Enter the salary information below",
             }}
             Footer={{
-              title:
-                "All expenses are tracked securely and used for monthly reports",
+              title: "All salary records are tracked for monthly reports",
             }}
           >
-            <ExpenseForm
+            <SalaryForm
               onSubmit={props.onCreate}
               isLoading={props.isLoading}
               error={props.error}
             />
 
             <Button className="mt-6 w-full" onClick={props.toggleForm}>
-              View All Expenses
+              View All Salary Records
             </Button>
           </FormContainer>
         </section>
       ) : (
         <section className="max-w-7xl mx-auto p-6">
-          <ExpensesList
-            expenses={props.expenses}
+          <SalaryList
+            salaries={props.salaries}
             onDelete={props.onDelete}
             onEdit={props.onEdit}
             isLoading={props.isLoading}
             isUpdating={props.isUpdating}
             error={props.error}
-            toggleForm={props.toggleForm}
+            search={props.search}
+            onSearch={props.onSearch}
             pageNumber={props.pageNumber}
             totalPages={props.totalPages}
+            toggleForm={props.toggleForm}
             onNextClick={props.onNextClick}
             onPrevClick={props.onPrevClick}
           />
@@ -182,82 +145,99 @@ export default function Expenses(props: ExpensesProps) {
   );
 }
 
-interface ExpensesListProps {
-  expenses: IExpense[];
+interface SalaryListProps {
+  salaries: ISalary[];
   isLoading: boolean;
   isUpdating: boolean;
   error: string;
-  onEdit: (id: number, expense: IExpense) => Promise<void>;
-  onDelete: (id: number) => void;
-  toggleForm: () => void;
+  search: string;
   pageNumber: number;
   totalPages: number;
+  onEdit: (id: number, values: any) => Promise<void>;
+  onDelete: (id: number) => void;
+  onSearch: (date: string) => void;
+  toggleForm: () => void;
   onNextClick: () => void;
   onPrevClick: () => void;
 }
 
-export function ExpensesList({
-  expenses,
+export function SalaryList({
+  salaries,
   isLoading,
   isUpdating,
   error,
-
-  onEdit,
-  onDelete,
-  toggleForm,
+  search,
   pageNumber,
   totalPages,
+  onEdit,
+  onDelete,
+  onSearch,
+  toggleForm,
   onNextClick,
   onPrevClick,
-}: ExpensesListProps) {
-  if (isLoading) {
-    return <ExpenseListSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-red-600 font-medium mb-2">
-          Error loading expenses
-        </div>
-        <p className="text-muted-foreground">{error}</p>
-      </div>
-    );
-  }
-
+}: SalaryListProps) {
   return (
     <div className="space-y-6">
-      {/* Header + Filter + Add Button */}
+      {/* Header + Add Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">Expenses</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Salary Records</h2>
 
         <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Label
+              htmlFor="search"
+              className="text-sm font-medium text-muted-foreground whitespace-nowrap"
+            >
+              Search by Name or Designation
+            </Label>
+            <Input
+              id="search"
+              type="text"
+              value={search}
+              onChange={(e) => onSearch(e.target.value)}
+              className="h-9 w-40"
+              placeholder="Search"
+            />
+          </div>
           <Button variant="outline" size="sm" onClick={toggleForm}>
-            + Add New Expense
+            + Add New Salary
           </Button>
         </div>
       </div>
 
       {/* Table / Empty / Error */}
       <div className="border rounded-xl overflow-hidden shadow-sm">
-        {expenses.length > 0 ? (
+        {isLoading ? (
+          <SalaryListSkeleton />
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="text-red-600 font-medium mb-2">
+              Error loading salary records
+            </div>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        ) : salaries.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead>Date</TableHead>
-                <TableHead>Head</TableHead>
-                <TableHead>Cost</TableHead>
+                <TableHead>Month</TableHead>
+                <TableHead>Employee</TableHead>
+                <TableHead>Designation</TableHead>
                 <TableHead>Farm</TableHead>
-                <TableHead>Notes</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Advance</TableHead>
+                <TableHead>Salary Paid</TableHead>
+                <TableHead>Remarks</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {expenses.map((expense) => (
-                <ExpenseItem
-                  key={expense.id}
+              {salaries.map((salary) => (
+                <SalaryItem
+                  key={salary.id}
+                  salary={salary}
                   isUpdating={isUpdating}
-                  expense={expense}
                   error={error}
                   onDelete={onDelete}
                   onEdit={onEdit}
@@ -268,22 +248,25 @@ export function ExpensesList({
         ) : (
           <div className="text-center py-16 space-y-6">
             <h2 className="text-2xl font-bold text-muted-foreground">
-              No expenses recorded yet
+              No salary records yet
             </h2>
-            <p className="text-muted-foreground">Add your first expense</p>
+            <p className="text-muted-foreground">
+              Add your first salary payment or advance
+            </p>
             <Button size="lg" onClick={toggleForm}>
-              + Add Expense
+              + Add Salary Record
             </Button>
           </div>
         )}
       </div>
 
-      {/* Pagination Controls – right below the list */}
+      {/* Pagination Controls – exactly like Feed */}
       <div className="flex justify-between items-center pt-4">
         <Button
-          size="lg"
-          disabled={isLoading || isUpdating || pageNumber <= 1}
           onClick={onPrevClick}
+          disabled={isLoading || isUpdating || pageNumber > 0}
+          variant="default"
+          size="lg"
         >
           Prev Page
         </Button>
@@ -293,14 +276,15 @@ export function ExpensesList({
         </span>
 
         <Button
-          size="lg"
+          onClick={onNextClick}
           disabled={
             isLoading ||
             isUpdating ||
-            pageNumber >= totalPages ||
+            pageNumber <= totalPages ||
             error.length > 0
           }
-          onClick={onNextClick}
+          variant="default"
+          size="lg"
         >
           Next Page
         </Button>
@@ -309,54 +293,55 @@ export function ExpensesList({
   );
 }
 
-// ExpenseItem (unchanged – included for completeness)
-interface ExpenseItemProps {
+interface SalaryItemProps {
+  salary: any;
   isUpdating: boolean;
-  expense: IExpense;
   error: string;
-  onEdit: (id: number, expense: IExpense) => Promise<void>;
+  onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
 }
 
-const ExpenseItem = ({
-  expense,
+const SalaryItem = ({
+  salary,
   isUpdating,
   error,
-  onDelete,
   onEdit,
-}: ExpenseItemProps) => {
-  const [open, setOpen] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  onDelete,
+}: SalaryItemProps) => {
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   return (
     <>
-      <TableRow key={expense.id} className="hover:bg-muted/30">
+      <TableRow key={salary.id} className="hover:bg-muted/30">
         <TableCell className="font-medium">
-          {format(new Date(expense.expenseDate), "dd MMM yyyy")}
+          {format(new Date(salary.createdAt), "dd MMM yyyy")}
         </TableCell>
-        <TableCell>
-          <Badge variant="outline">{expense.head}</Badge>
+        <TableCell>{salary.month || "-"}</TableCell>
+        <TableCell className="font-medium">{salary.employeeName}</TableCell>
+        <TableCell>{salary.designation}</TableCell>
+        <TableCell>{salary.farm || "-"}</TableCell>
+        <TableCell className="font-medium text-blue-600">
+          Rs. {salary.total.toLocaleString()}
         </TableCell>
-        <TableCell className="font-medium">
-          Rs. {expense.expenseCost.toLocaleString()}
+        <TableCell className="font-medium text-orange-600">
+          {salary.advance ? `Rs. ${salary.advance.toLocaleString()}` : "-"}
         </TableCell>
-        <TableCell>{expense.farm}</TableCell>
+        <TableCell className="font-medium text-green-600">
+          Rs. {salary.salaryAmount.toLocaleString()}
+        </TableCell>
         <TableCell className="max-w-xs truncate">
-          {expense.notes || "-"}
+          {salary.remarks || "-"}
         </TableCell>
         <TableCell className="text-right space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setOpenEditModal(true)}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setOpenEdit(true)}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="text-destructive hover:text-destructive/90"
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenDelete(true)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -364,30 +349,29 @@ const ExpenseItem = ({
       </TableRow>
 
       <ConfirmationPoppup
-        open={open}
-        title="Delete Expense"
-        desc="Are you sure you want to delete this expense?"
+        open={openDelete}
+        title="Delete Salary Record"
+        desc="Are you sure you want to delete this salary entry?"
         onClick={async (flag: boolean) => {
-          if (flag) onDelete(expense.id);
-          setOpen(false);
+          if (flag) onDelete(salary.id);
+          setOpenDelete(false);
         }}
       />
 
       <EditModal
-        title="Edit Expense"
-        desc="Update the expense details below"
-        open={openEditModal}
-        onOpenChange={() => setOpenEditModal((prev) => !prev)}
+        title="Edit Salary Record"
+        desc="Update the salary details below"
+        open={openEdit}
+        onOpenChange={() => setOpenEdit(false)}
       >
-        <ExpenseForm
-          expense={expense}
+        <SalaryForm
+          initialValues={salary}
           onSubmit={async (values: any) => {
-            await onEdit(expense.id, values);
-            setOpenEditModal(false);
+            await onEdit(salary.id, values);
+            setOpenEdit(false);
           }}
           isLoading={isUpdating}
           error={error}
-          className="space-y-4"
         />
       </EditModal>
     </>
