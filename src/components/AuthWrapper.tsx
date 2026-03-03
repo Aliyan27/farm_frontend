@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
+import bannerImage from "../assets/image/Banner-img.jpeg";
 
 type AuthWrapperProps = {
   children: ReactNode;
@@ -21,9 +22,9 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
           <div className="w-full max-w-xs">{children}</div>
         </div>
       </div>
-      <div className="bg-muted relative hidden lg:block">
+      <div className="bg-muted relative hidden lg:block m-4 rounded-2xl overflow-hidden">
         <img
-          src="/placeholder.svg"
+          src={bannerImage}
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />

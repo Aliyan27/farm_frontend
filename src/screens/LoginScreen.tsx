@@ -30,11 +30,7 @@ const LoginScreen = () => {
     }
   };
 
-  return (
-    <AuthWrapper>
-      <LoginForm onSubmit={onLogin} isLoading={isLoading} error={error} />
-    </AuthWrapper>
-  );
+  return <LoginForm onSubmit={onLogin} isLoading={isLoading} error={error} />;
 };
 
 export default LoginScreen;

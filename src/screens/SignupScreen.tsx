@@ -23,11 +23,7 @@ const SignupScreen = () => {
       setIsLoading(false);
     }
   };
-  return (
-    <AuthWrapper>
-      <SignupForm onSubmit={onSignup} isLoading={isLoading} error={error} />
-    </AuthWrapper>
-  );
+  return <SignupForm onSubmit={onSignup} isLoading={isLoading} error={error} />;
 };
 
 export default SignupScreen;
