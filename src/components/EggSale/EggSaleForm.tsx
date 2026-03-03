@@ -276,8 +276,11 @@ export function EggSaleForm({
 
       {/* Submit */}
       <div className="flex justify-end mt-4">
-        <Button type="submit" disabled={isLoading || !formik.isValid}>
-          {isLoading ? "Saving..." : "Save Sale"}
+        <Button
+          type="submit"
+          disabled={isLoading || !formik.isValid || !formik.dirty}
+        >
+          {isLoading ? "Saving..." : "Save"}
         </Button>
       </div>
 

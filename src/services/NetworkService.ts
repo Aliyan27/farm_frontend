@@ -1,5 +1,6 @@
 import axios from "axios";
 import { baseUrl } from "../utils/Config";
+import RouteNames from "@/routes/RouteNames";
 
 const newBaseUrl = () => {
   if (window.location.protocol === "http:") {
@@ -10,6 +11,37 @@ const newBaseUrl = () => {
     return baseUrl;
   }
 };
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    try {
+      console.warn("error intercepted", error);
+      const status = error.response ? error.response.status : null;
+
+      if (status === 403) {
+        console.warn("checking session::");
+        console.warn("session expired");
+
+        // Clear stored data
+
+        // Clear global auth token
+        globalThis.authToken = undefined;
+
+        // Redirect to home/login page
+        window.location.href = RouteNames.login;
+
+        // Prevent further execution
+        await new Promise(() => {});
+      }
+
+      return Promise.reject(error);
+    } catch (e) {
+      console.warn("err in interceptor", e);
+      return Promise.reject(error);
+    }
+  },
+);
 
 export const apiRequest = async (
   endPoint: string,

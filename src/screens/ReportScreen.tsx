@@ -55,7 +55,7 @@ export default function IncomeStatementScreen() {
 
       const response = await getIncomeStatementService({ startDate, endDate });
 
-      if (response.message === "Income statement generated") {
+      if (response.message === "success") {
         setStatement(response.data);
       } else {
         setError("Failed to load income statement");
@@ -273,6 +273,10 @@ function IncomeStatementView({ data }: IncomeStatementViewProps) {
               title="Miscellaneous"
               value={operatingExpenses.miscellaneous}
             />
+            <SmallStat
+              title="SALARIES_PAYMENTS"
+              value={operatingExpenses.salariesPayments}
+            />
             <div className="col-span-2 md:col-span-4">
               <SmallStat
                 title="Total Operating Expenses"
@@ -327,7 +331,6 @@ function IncomeStatementView({ data }: IncomeStatementViewProps) {
   );
 }
 
-// Reusable small stat component
 function SmallStat({
   title,
   value,
