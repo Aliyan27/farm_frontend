@@ -77,7 +77,7 @@ export default function IncomeStatementScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header + Filters */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">

@@ -49,7 +49,7 @@ interface FeedPurchasesProps {
 
 export default function Feed(props: FeedPurchasesProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Summary Section */}
       <section className="p-6 border-b">
         <div className="max-w-7xl mx-auto space-y-6">

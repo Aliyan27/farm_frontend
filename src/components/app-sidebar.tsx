@@ -1,23 +1,23 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
-  BookOpen,
-  Bot,
+  BarChart3,
   Command,
-  Frame,
+  DollarSign,
+  Egg,
+  LayoutDashboard,
   LifeBuoy,
-  Map,
-  PieChart,
+  Package,
   Send,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+  ShoppingCart,
+  Users,
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+// import { NavProjects } from "@/components/nav-projects";
+// import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -26,101 +26,54 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import RouteNames from "@/routes/RouteNames";
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Malik",
+    email: "malik@example.com",
+    avatar: "/avatars/malik.jpg", // optional
   },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Dashboard",
+      url: RouteNames.dashboard,
+      icon: LayoutDashboard,
       isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      title: "Expenses",
+      url: RouteNames.expenses,
+      icon: DollarSign,
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      title: "Feed Purchases",
+      url: RouteNames.feedPurchase,
+      icon: Package,
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      title: "Egg Production",
+      url: RouteNames.eggProduction,
+      icon: Egg,
+    },
+    {
+      title: "Egg Sales",
+      url: RouteNames.eggSale,
+      icon: ShoppingCart,
+    },
+    {
+      title: "Salaries",
+      url: RouteNames.salaries,
+      icon: Users,
+    },
+    {
+      title: "Reports",
+      url: RouteNames.report,
+      icon: BarChart3,
     },
   ],
+  // Keep your navSecondary and projects if needed, or remove them
   navSecondary: [
     {
       title: "Support",
@@ -133,24 +86,7 @@ const data = {
       icon: Send,
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -174,12 +110,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {/* <NavProjects projects={data.projects} /> */}
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
