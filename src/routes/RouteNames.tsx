@@ -7,6 +7,8 @@ const RouteNames = {
   eggSale: "/egg-sales",
   salaries: "/salaries",
   report: "/reports",
+  forgotPassword: "/forgot-password",
+  changePassword: "/change-password",
   dashboard: "/",
 };
 

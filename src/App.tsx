@@ -10,8 +10,8 @@ export default function App() {
 
     if (token?.trim()) {
       globalThis.authToken = token.trim();
-      setIsReady(true);
     }
+    setIsReady(true);
   }, []);
 
   // if (!isReady) {

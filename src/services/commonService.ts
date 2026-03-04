@@ -65,3 +65,43 @@ export const getIncomeStatementService = async (params?: {
 
   return data;
 };
+
+export const forgotPasswordService = async (email: string) => {
+  let endpoint = ApiNames.forgotPassword;
+
+  const { data }: { data: IResponse<null> } = await apiRequestNoAuth(
+    endpoint,
+    RequestMethod.Post,
+    { email },
+  );
+
+  return data;
+};
+
+export const verifyOtpService = async (email: string, otp: string) => {
+  let endpoint = ApiNames.verifyOTP;
+
+  const { data }: { data: IResponse<ISigninResponse> } = await apiRequestNoAuth(
+    endpoint,
+    RequestMethod.Post,
+    {
+      email,
+      otp,
+    },
+  );
+
+  return data;
+};
+
+export const changePasswordService = async (newPassword: string) => {
+  let endpoint = ApiNames.changePassword;
+  const { data }: { data: IResponse<null> } = await apiRequest(
+    endpoint,
+    RequestMethod.Post,
+    {
+      newPassword,
+    },
+  );
+
+  return data;
+};

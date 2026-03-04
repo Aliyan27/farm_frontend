@@ -19,12 +19,7 @@ axios.interceptors.response.use(
       console.warn("error intercepted", error);
       const status = error.response ? error.response.status : null;
 
-      if (status === 403) {
-        console.warn("checking session::");
-        console.warn("session expired");
-
-        // Clear stored data
-
+      if (status === 401) {
         // Clear global auth token
         globalThis.authToken = undefined;
 

@@ -1,10 +1,9 @@
 import {
-  BadgeCheck,
-  Bell,
+  AtSign,
   ChevronsUpDown,
-  CreditCard,
+  KeyRound,
   LogOut,
-  Sparkles,
+  MailCheck,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/store/AuthStore";
 import { useNavigation } from "@/Hooks/useNavigation";
+import RouteNames from "@/routes/RouteNames";
 
 export function NavUser({
   user,
@@ -90,18 +90,21 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              {/* <DropdownMenuItem>
-                <CreditCard />
-                Billing
+              <DropdownMenuItem
+                onClick={() => navigateTo(RouteNames.changePassword)}
+              >
+                <KeyRound className="mr-2 h-4 w-4" />
+                Change Password
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem> */}
+                <MailCheck className="mr-2 h-4 w-4" />
+                Verify Email
+              </DropdownMenuItem>
+
+              <DropdownMenuItem>
+                <AtSign className="mr-2 h-4 w-4" />
+                Change Email
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>

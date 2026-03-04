@@ -16,6 +16,9 @@ const ApiNames = {
   dashboardExpenses: "/dashboard/expenses",
   dashboardEggProductions: "/dashboard/egg-productions",
   dashboardEggSales: "/dashboard/egg-sales",
+  forgotPassword: "/auth/forgot-password",
+  verifyOTP: "/auth/verifyOTP",
+  changePassword: "/user/change-password",
 };
 
 export default ApiNames;

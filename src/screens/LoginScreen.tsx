@@ -1,5 +1,4 @@
 import { LoginForm } from "@/components/login-form";
-import AuthWrapper from "@/components/AuthWrapper";
 import { useState } from "react";
 import { getErrorDataCase } from "@/lib/utils";
 import { useNavigation } from "@/Hooks/useNavigation";

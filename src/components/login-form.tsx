@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import RouteNames from "@/routes/RouteNames";
 // import { useNavigate } from "react-router-dom";
 
 // Validation schema with Yup
@@ -78,7 +79,7 @@ export function LoginForm(props: LoginFormProps) {
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <a
-              href="#"
+              href={RouteNames.forgotPassword}
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
               Forgot your password?

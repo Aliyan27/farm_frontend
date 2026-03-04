@@ -8,10 +8,22 @@ import EggSaleScreen from "@/screens/EggSaleScreen";
 import SalaryScreen from "@/screens/SalaryScreen";
 import IncomeStatementScreen from "@/screens/ReportScreen";
 import DashboardScreen from "@/screens/DashboardScreen";
+import ForgotPasswordScreen from "@/screens/ForgotPasswordScreen";
+import ChangePasswordScreen from "@/screens/ChangePasswordScreen";
 
 const RouteList = [
   { path: RouteNames.login, element: LoginScreen, isPublic: true },
   { path: RouteNames.signup, element: SignupScreen, isPublic: true },
+  {
+    path: RouteNames.forgotPassword,
+    element: ForgotPasswordScreen,
+    isPublic: true,
+  },
+  {
+    path: RouteNames.changePassword,
+    element: ChangePasswordScreen,
+    isPublic: false,
+  },
   { path: RouteNames.expenses, element: ExpensesScreen, isPublic: false },
   { path: RouteNames.feedPurchase, element: FeedScreen, isPublic: false },
   {
