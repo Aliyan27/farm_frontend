@@ -105,3 +105,39 @@ export const changePasswordService = async (newPassword: string) => {
 
   return data;
 };
+
+export const sendVerificationEmailService = async (email: string) => {
+  let endpoint = ApiNames.sendVerificationEmail;
+
+  const { data }: { data: IResponse<null> } = await apiRequest(
+    endpoint,
+    RequestMethod.Post,
+    { email },
+  );
+
+  return data;
+};
+
+export const verifyEmailService = async (email: string, otp: string) => {
+  let endpoint = ApiNames.verifyEmail;
+
+  const { data }: { data: IResponse<null> } = await apiRequest(
+    endpoint,
+    RequestMethod.Post,
+    { email, otp },
+  );
+
+  return data;
+};
+
+export const updateProfileService = async (email: string, name?: string) => {
+  let endpoint = ApiNames.updateProfile;
+
+  const { data }: { data: IResponse<IUser> } = await apiRequest(
+    endpoint,
+    RequestMethod.Put,
+    name ? { email, name } : { email },
+  );
+
+  return data;
+};

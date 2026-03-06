@@ -19,6 +19,9 @@ const ApiNames = {
   forgotPassword: "/auth/forgot-password",
   verifyOTP: "/auth/verifyOTP",
   changePassword: "/user/change-password",
+  sendVerificationEmail: "/user/send-verification-email",
+  verifyEmail: "/user/verify-email",
+  updateProfile: "/user/profile",
 };
 
 export default ApiNames;

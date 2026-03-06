@@ -9,6 +9,8 @@ const RouteNames = {
   report: "/reports",
   forgotPassword: "/forgot-password",
   changePassword: "/change-password",
+  verifyEmail: "/verify-email",
+  changeEmail: "/update-profile",
   dashboard: "/",
 };
 

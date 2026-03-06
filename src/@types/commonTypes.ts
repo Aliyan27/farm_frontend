@@ -5,6 +5,7 @@ export interface IResponse<T> {
 
 export interface ISigninResponse {
   token: string;
+  user: IUser;
 }
 
 export interface IUser {

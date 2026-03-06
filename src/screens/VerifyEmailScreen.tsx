@@ -1,20 +1,19 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { getErrorDataCase } from "@/lib/utils";
 import {
-  forgotPasswordService,
-  verifyOtpService,
+  sendVerificationEmailService,
+  verifyEmailService,
 } from "@/services/commonService";
+import toast from "react-hot-toast";
 import RouteNames from "@/routes/RouteNames";
-
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/AuthStore";
-import ForgotPassword from "@/pages/ForgotPassword";
+import VerifyEmail from "@/pages/VerifyEmail";
 
-const ForgotPasswordScreen = () => {
+const VerifyEmailScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showOtpForm, setShowOtpForm] = useState(false);
-  const [emailSentTo, setEmailSentTo] = useState<string>("");
   const [timer, setTimer] = useState<number>(60);
-  const { login } = useAuthStore();
+  const { user, setUser } = useAuthStore();
 
   useEffect(() => {
     if (!showOtpForm || timer <= 0) return;
@@ -32,24 +31,17 @@ const ForgotPasswordScreen = () => {
     return () => clearInterval(interval);
   }, [showOtpForm, timer]);
 
-  const handleSendEmail = async (email: string) => {
-    setIsLoading(true);
-
+  const sendVerificationEmail = async () => {
     try {
-      const response = await forgotPasswordService(email);
-
-      if (response.message?.toLowerCase().includes("success")) {
+      if (!user) return;
+      let response = await sendVerificationEmailService(user.email);
+      if (response.message.toLowerCase() === "success") {
         toast.success("OTP sent to your email");
-        setEmailSentTo(email);
         setShowOtpForm(true);
         setTimer(60);
-      } else {
-        toast.error(response.message || "Failed to send OTP");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Something went wrong. Try again.");
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      console.log(getErrorDataCase(error));
     }
   };
 
@@ -57,13 +49,15 @@ const ForgotPasswordScreen = () => {
     setIsLoading(true);
 
     try {
-      const response = await verifyOtpService(emailSentTo, otp);
+      if (!user) return;
+      const response = await verifyEmailService(user.email, otp);
 
       if (response.message?.toLowerCase().includes("success")) {
         toast.success("Email verified! Redirecting...");
-        login(response.data.token);
-        globalThis.authToken = response.data.token;
-        window.location.replace(`${RouteNames.changePassword}?type=otp`);
+        user.isEmailVerified = true;
+        setUser(user);
+
+        window.location.replace(`${RouteNames.dashboard}`);
       } else {
         toast.error(response.message || "Invalid OTP");
       }
@@ -77,16 +71,16 @@ const ForgotPasswordScreen = () => {
   const handleResendOtp = async () => {
     if (timer > 0 || isLoading) return;
 
-    await handleSendEmail(emailSentTo);
+    await sendVerificationEmail();
   };
 
   return (
-    <ForgotPassword
+    <VerifyEmail
       showOtpForm={showOtpForm}
       isLoading={isLoading}
-      emailSentTo={emailSentTo}
+      emailSentTo={user?.email ?? "sample@gmail.com"}
       timer={timer}
-      handleSendEmail={handleSendEmail}
+      handleSendEmail={sendVerificationEmail}
       handleVerifyOtp={handleVerifyOtp}
       handleResendOtp={handleResendOtp}
       hideOtpForm={() => setShowOtpForm(false)}
@@ -94,4 +88,4 @@ const ForgotPasswordScreen = () => {
   );
 };
 
-export default ForgotPasswordScreen;
+export default VerifyEmailScreen;

@@ -10,6 +10,8 @@ import IncomeStatementScreen from "@/screens/ReportScreen";
 import DashboardScreen from "@/screens/DashboardScreen";
 import ForgotPasswordScreen from "@/screens/ForgotPasswordScreen";
 import ChangePasswordScreen from "@/screens/ChangePasswordScreen";
+import VerifyEmailScreen from "@/screens/VerifyEmailScreen";
+import UpdateProfileScreen from "@/screens/UpdateProfileScreen";
 
 const RouteList = [
   { path: RouteNames.login, element: LoginScreen, isPublic: true },
@@ -49,6 +51,12 @@ const RouteList = [
   {
     path: RouteNames.dashboard,
     element: DashboardScreen,
+    isPublic: false,
+  },
+  { path: RouteNames.verifyEmail, element: VerifyEmailScreen, isPublic: false },
+  {
+    path: RouteNames.changeEmail,
+    element: UpdateProfileScreen,
     isPublic: false,
   },
 ];

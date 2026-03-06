@@ -1,9 +1,4 @@
-import {
-  Routes,
-  Route,
-  Navigate,
-  BrowserRouter as Router,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import RouteList from "./RouteList";
 import { type JSX } from "react";
 import { useAuthStore } from "@/store/AuthStore";
@@ -23,22 +18,28 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useNavigation } from "@/Hooks/useNavigation";
+import RouteNames from "./RouteNames";
 
 const protectedRoute = (element: JSX.Element) => {
+  const { getCurrentRoute } = useNavigation();
   const { isAuthenticated } = useAuthStore();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  if (!isAuthenticated && getCurrentRoute() !== RouteNames.changePassword) {
+    return <Navigate to={RouteNames.login} replace />;
   }
-
   return element;
 };
 
 const publicRoute = (element: JSX.Element) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    if (user?.isEmailVerified) {
+      return <Navigate to={RouteNames.dashboard} replace />;
+    } else {
+      return <Navigate to={RouteNames.verifyEmail} replace />;
+    }
   }
 
   return element;
@@ -47,70 +48,66 @@ const publicRoute = (element: JSX.Element) => {
 const InitiateRoute = () => {
   return (
     <>
-      <Router>
-        <Routes>
-          {RouteList.map((route, index) => {
-            if (route.isPublic) {
-              return (
-                <Route
-                  key={`route-${index}`}
-                  path={route.path}
-                  element={publicRoute(
-                    <AuthWrapper key={`auth-wrapper-${index}`}>
-                      <route.element />
-                    </AuthWrapper>,
-                  )}
-                />
-              );
-            }
-
+      <Routes>
+        {RouteList.map((route, index) => {
+          if (route.isPublic) {
             return (
               <Route
                 key={`route-${index}`}
                 path={route.path}
-                element={protectedRoute(
-                  <>
-                    <SidebarProvider>
-                      <AppSidebar variant="inset" />
-                      <SidebarInset className="bg-background">
-                        <main className="p-6">
-                          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                            <div className="flex items-center gap-2 px-4">
-                              <SidebarTrigger className="-ml-1" />
-                              <Separator
-                                orientation="vertical"
-                                className="mr-2 data-[orientation=vertical]:h-4"
-                              />
-                              <Breadcrumb>
-                                <BreadcrumbList>
-                                  <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink>
-                                      Build Your Application
-                                    </BreadcrumbLink>
-                                  </BreadcrumbItem>
-                                  <BreadcrumbSeparator className="hidden md:block" />
-                                  <BreadcrumbItem>
-                                    <BreadcrumbPage>
-                                      Data Fetching
-                                    </BreadcrumbPage>
-                                  </BreadcrumbItem>
-                                </BreadcrumbList>
-                              </Breadcrumb>
-                            </div>
-                          </header>
-                          <route.element />
-                        </main>
-                      </SidebarInset>
-                    </SidebarProvider>
-                  </>,
+                element={publicRoute(
+                  <AuthWrapper key={`auth-wrapper-${index}`}>
+                    <route.element />
+                  </AuthWrapper>,
                 )}
               />
             );
-          })}
+          }
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
+          return (
+            <Route
+              key={`route-${index}`}
+              path={route.path}
+              element={protectedRoute(
+                <>
+                  <SidebarProvider>
+                    <AppSidebar variant="inset" />
+                    <SidebarInset className="bg-background">
+                      <main className="p-6">
+                        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                          <div className="flex items-center gap-2 px-4">
+                            <SidebarTrigger className="-ml-1" />
+                            <Separator
+                              orientation="vertical"
+                              className="mr-2 data-[orientation=vertical]:h-4"
+                            />
+                            <Breadcrumb>
+                              <BreadcrumbList>
+                                <BreadcrumbItem className="hidden md:block">
+                                  <BreadcrumbLink>
+                                    Build Your Application
+                                  </BreadcrumbLink>
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbItem>
+                                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                                </BreadcrumbItem>
+                              </BreadcrumbList>
+                            </Breadcrumb>
+                          </div>
+                        </header>
+                        <route.element />
+                      </main>
+                    </SidebarInset>
+                  </SidebarProvider>
+                </>,
+              )}
+            />
+          );
+        })}
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </>
   );
 };
