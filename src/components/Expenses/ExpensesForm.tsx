@@ -4,7 +4,6 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useEffect } from "react";
 import { Textarea } from "../ui/TextArea";
 import type { IExpense } from "@/@types/expenseTypes";
 
@@ -57,7 +56,6 @@ interface ExpenseFormProps {
   expense?: IExpense;
   onSubmit: (values: any) => Promise<void>;
   isLoading: boolean;
-  error: string;
 }
 
 export function ExpenseForm(props: ExpenseFormProps) {
@@ -81,12 +79,6 @@ export function ExpenseForm(props: ExpenseFormProps) {
       formik.resetForm();
     },
   });
-
-  useEffect(() => {
-    if (!props.isLoading && !props.error && formik.submitCount > 0) {
-      // Optional: handle success (e.g. close modal from parent)
-    }
-  }, [props.isLoading, props.error, formik.submitCount]);
 
   return (
     <form
@@ -281,11 +273,6 @@ export function ExpenseForm(props: ExpenseFormProps) {
             {props.isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
-
-        {/* Server-side error */}
-        {props.error && (
-          <p className="text-sm text-red-600 text-center mt-3">{props.error}</p>
-        )}
       </FieldGroup>
     </form>
   );

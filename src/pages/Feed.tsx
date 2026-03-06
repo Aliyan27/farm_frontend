@@ -27,7 +27,6 @@ interface FeedPurchasesProps {
   showForm: boolean;
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   feedPurchases: IFeed[];
   feedSummary: IFeedSummary | null;
   onCreate: (values: any) => Promise<void>;
@@ -147,11 +146,7 @@ export default function Feed(props: FeedPurchasesProps) {
                 "All feed records are tracked for monthly statements and reports",
             }}
           >
-            <FeedForm
-              onSubmit={props.onCreate}
-              isLoading={props.isLoading}
-              error={props.error}
-            />
+            <FeedForm onSubmit={props.onCreate} isLoading={props.isLoading} />
 
             <Button className="mt-6 w-full" onClick={props.toggleForm}>
               View All Feed Records
@@ -166,7 +161,6 @@ export default function Feed(props: FeedPurchasesProps) {
             onEdit={props.onEdit}
             isLoading={props.isLoading}
             isUpdating={props.isUpdating}
-            error={props.error}
             pageNumber={props.pageNumber}
             totalPages={props.totalPages}
             toggleForm={props.toggleForm}
@@ -183,7 +177,6 @@ interface FeedListProps {
   feedPurchases: any[];
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   pageNumber: number;
   totalPages: number;
   onEdit: (id: number, values: any) => Promise<void>;
@@ -197,7 +190,6 @@ export function FeedList({
   feedPurchases,
   isLoading,
   isUpdating,
-  error,
   pageNumber,
   totalPages,
   onEdit,
@@ -247,20 +239,12 @@ export function FeedList({
                   key={purchase.id}
                   purchase={purchase}
                   isUpdating={isUpdating}
-                  error={error}
                   onDelete={onDelete}
                   onEdit={onEdit}
                 />
               ))}
             </TableBody>
           </Table>
-        ) : error ? (
-          <div className="text-center py-12">
-            <div className="text-red-600 font-medium mb-2">
-              Error loading feed records
-            </div>
-            <p className="text-muted-foreground">{error}</p>
-          </div>
         ) : (
           <div className="text-center py-16 space-y-6">
             <h2 className="text-2xl font-bold text-muted-foreground">
@@ -293,12 +277,7 @@ export function FeedList({
 
         <Button
           onClick={onNextClick}
-          disabled={
-            isLoading ||
-            isUpdating ||
-            pageNumber <= totalPages ||
-            error.length > 0
-          }
+          disabled={isLoading || isUpdating || pageNumber <= totalPages}
           variant="default"
           size="lg"
         >
@@ -313,7 +292,6 @@ export function FeedList({
 interface FeedItemProps {
   purchase: any;
   isUpdating: boolean;
-  error: string;
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
 }
@@ -321,7 +299,6 @@ interface FeedItemProps {
 const FeedItem = ({
   purchase,
   isUpdating,
-  error,
   onEdit,
   onDelete,
 }: FeedItemProps) => {
@@ -388,7 +365,6 @@ const FeedItem = ({
             setOpenEdit(false);
           }}
           isLoading={isUpdating}
-          error={error}
         />
       </EditModal>
     </>

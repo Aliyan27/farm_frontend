@@ -42,7 +42,6 @@ interface EggSaleFormProps {
   initialValues?: IEggSale;
   onSubmit: (values: any) => Promise<void>;
   isLoading: boolean;
-  error: string;
   className?: string;
 }
 
@@ -50,7 +49,6 @@ export function EggSaleForm({
   initialValues,
   onSubmit,
   isLoading,
-  error,
   className,
 }: EggSaleFormProps) {
   const formik = useFormik({
@@ -283,10 +281,6 @@ export function EggSaleForm({
           {isLoading ? "Saving..." : "Save"}
         </Button>
       </div>
-
-      {error && (
-        <p className="text-sm text-red-600 text-center mt-4">{error}</p>
-      )}
     </form>
   );
 }

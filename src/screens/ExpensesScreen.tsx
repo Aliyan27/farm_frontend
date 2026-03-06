@@ -11,10 +11,10 @@ import { getErrorDataCase } from "@/lib/utils";
 import Expenses from "@/pages/Expenses";
 import type { IExpense } from "@/@types/expenseTypes";
 import type { IExpenseSummary } from "@/@types/expenseTypes"; // adjust if needed
+import toast from "react-hot-toast";
 
 const HomeScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [expenses, setExpenses] = useState<IExpense[]>([]);
   const pageNumber = useRef(1);
@@ -66,10 +66,9 @@ const HomeScreen = () => {
           response.data.pagination.pages > 0;
         totalPages.current = response.data.pagination.pages;
         setExpenses(response.data.items);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -81,10 +80,9 @@ const HomeScreen = () => {
       const response = await createExpenseService(values);
       if (response.message.toLowerCase() === "success") {
         setExpenses((prev) => [...prev, response.data]);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -95,10 +93,9 @@ const HomeScreen = () => {
       const response = await deleteExpenseService(id);
       if (response.message.toLowerCase() === "success") {
         setExpenses((prev) => prev.filter((expense) => expense.id !== id));
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     }
   };
 
@@ -113,10 +110,9 @@ const HomeScreen = () => {
           prev[index] = { ...prev[index], ...updatedExpense };
           return [...prev];
         });
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsUpdating(false);
     }
@@ -149,10 +145,9 @@ const HomeScreen = () => {
 
       if (response.message.toLowerCase() === "success") {
         setExpenseSummary(response.data);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoadingSummary(false);
     }
@@ -192,7 +187,6 @@ const HomeScreen = () => {
       expenses={expenses}
       isLoading={isLoading}
       isUpdating={isUpdating}
-      error={error}
       expenseSummary={expenseSummary}
       isLoadingSummary={isLoadingSummary}
       selectedFarm={selectedFarm}

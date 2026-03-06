@@ -5,10 +5,10 @@ import { useNavigation } from "@/Hooks/useNavigation";
 import { useAuthStore } from "@/store/AuthStore";
 import { signinService } from "@/services/commonService";
 import RouteNames from "@/routes/RouteNames";
+import toast from "react-hot-toast";
 
 const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const { navigateTo } = useNavigation();
   const { login, setUser } = useAuthStore();
 
@@ -19,7 +19,6 @@ const LoginScreen = () => {
       if (response.message.toLowerCase() === "success") {
         login(response.data.token);
         globalThis.authToken = response.data.token;
-        setError("");
         setUser(response.data.user);
         if (response.data.user.isEmailVerified) {
           console.log("isEmailVerified::", response.data.user.isEmailVerified);
@@ -30,13 +29,13 @@ const LoginScreen = () => {
       }
     } catch (error) {
       console.log("login error::", error);
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
   };
 
-  return <LoginForm onSubmit={onLogin} isLoading={isLoading} error={error} />;
+  return <LoginForm onSubmit={onLogin} isLoading={isLoading} />;
 };
 
 export default LoginScreen;

@@ -13,10 +13,10 @@ import type {
   IEggProduction,
   IEggProductionSummary,
 } from "@/@types/eggProductionTypes";
+import toast from "react-hot-toast";
 
 const EggProductionScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [records, setRecords] = useState<IEggProduction[]>([]);
   const pageNumber = useRef(1);
@@ -65,10 +65,9 @@ const EggProductionScreen = () => {
           response.data.pagination.pages > 0;
         totalPages.current = response.data.pagination.pages;
         setRecords(response.data.items);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -80,10 +79,9 @@ const EggProductionScreen = () => {
       const response = await createEggProductionService(values);
       if (response.message.toLowerCase() === "success") {
         setRecords((prev) => [...prev, response.data]);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -94,10 +92,9 @@ const EggProductionScreen = () => {
       const response = await deleteEggProductionService(id);
       if (response.message.toLowerCase() === "success") {
         setRecords((prev) => prev.filter((item) => item.id !== id));
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     }
   };
 
@@ -112,10 +109,9 @@ const EggProductionScreen = () => {
           prev[index] = { ...prev[index], ...updatedRecord };
           return [...prev];
         });
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsUpdating(false);
     }
@@ -150,10 +146,9 @@ const EggProductionScreen = () => {
 
       if (response.message.toLowerCase() === "success") {
         setSummary(response.data);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoadingSummary(false);
     }
@@ -193,7 +188,6 @@ const EggProductionScreen = () => {
       records={records}
       isLoading={isLoading}
       isUpdating={isUpdating}
-      error={error}
       summary={summary}
       selectedFarm={selectedFarm}
       startDate={startDate}

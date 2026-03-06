@@ -1,29 +1,33 @@
-import AuthWrapper from "@/components/AuthWrapper";
 import { SignupForm } from "@/components/SignupForm";
 import { useNavigation } from "@/Hooks/useNavigation";
 import { getErrorDataCase } from "@/lib/utils";
 import { signupService } from "@/services/commonService";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const SignupScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const { navigateTo } = useNavigation();
-  const onSignup = async (name: string, email: string, password: string) => {
+  const onSignup = async (
+    name: string,
+    email: string,
+    role: string,
+    password: string,
+  ) => {
     try {
-      let response = await signupService(name, email, password);
+      let response = await signupService(name, email, role, password);
       if (response.message.toLowerCase() === "success") {
-        setError("");
+        toast.success("Account Created");
         navigateTo("/login");
       }
     } catch (error) {
       console.log(error);
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
   };
-  return <SignupForm onSubmit={onSignup} isLoading={isLoading} error={error} />;
+  return <SignupForm onSubmit={onSignup} isLoading={isLoading} />;
 };
 
 export default SignupScreen;

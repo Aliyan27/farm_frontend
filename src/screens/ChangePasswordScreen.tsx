@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { changePasswordService } from "@/services/commonService";
 import { useNavigation } from "@/Hooks/useNavigation";
 import RouteNames from "@/routes/RouteNames";
 import ChangePassword from "@/pages/ChangePassword";
 import { useLocation } from "react-router-dom";
+import { getErrorDataCase } from "@/lib/utils";
 
 const ChangePasswordScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +32,7 @@ const ChangePasswordScreen = () => {
         toast.error(response.message || "Failed to change password");
       }
     } catch (err: any) {
-      toast.error(err.message || "Something went wrong. Try again.");
+      toast.error(getErrorDataCase(err) || "Something went wrong");
     } finally {
       setIsLoading(false);
     }

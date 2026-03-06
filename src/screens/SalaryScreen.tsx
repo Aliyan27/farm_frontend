@@ -9,10 +9,10 @@ import {
 import { getErrorDataCase } from "@/lib/utils";
 import Salary from "@/pages/Salary";
 import type { ISalary, ISalarySummary } from "@/@types/salaryTypes";
+import toast from "react-hot-toast";
 
 const SalaryScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [salaries, setSalaries] = useState<ISalary[]>([]);
   const pageNumber = useRef(1);
@@ -80,10 +80,10 @@ const SalaryScreen = () => {
           response.data.pagination.pages > 0;
         totalPages.current = response.data.pagination.pages;
         setSalaries(response.data.items);
-        setError("");
+        toast.error("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -95,10 +95,10 @@ const SalaryScreen = () => {
       const response = await createSalaryService(values);
       if (response.message.toLowerCase() === "success") {
         setSalaries((prev) => [...prev, response.data]);
-        setError("");
+        toast.error("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -109,10 +109,10 @@ const SalaryScreen = () => {
       const response = await deleteSalaryService(id);
       if (response.message.toLowerCase() === "success") {
         setSalaries((prev) => prev.filter((item) => item.id !== id));
-        setError("");
+        toast.error("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     }
   };
 
@@ -141,10 +141,10 @@ const SalaryScreen = () => {
           prev[index] = { ...prev[index], ...updatedSalary };
           return [...prev];
         });
-        setError("");
+        toast.error("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsUpdating(false);
     }
@@ -162,10 +162,10 @@ const SalaryScreen = () => {
 
       if (response.message.toLowerCase() === "success") {
         setSummary(response.data);
-        setError("");
+        toast.error("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoadingSummary(false);
     }
@@ -201,7 +201,6 @@ const SalaryScreen = () => {
       salaries={salaries}
       isLoading={isLoading}
       isUpdating={isUpdating}
-      error={error}
       summary={summary}
       selectedFarm={selectedFarm}
       search={search}

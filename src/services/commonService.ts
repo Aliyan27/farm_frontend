@@ -26,6 +26,7 @@ export const signinService = async (email: string, password: string) => {
 export const signupService = async (
   name: string,
   email: string,
+  role: string,
   password: string,
 ) => {
   let endPoint = ApiNames.signup;
@@ -36,6 +37,7 @@ export const signupService = async (
     {
       name,
       email,
+      role,
       password,
     },
   );

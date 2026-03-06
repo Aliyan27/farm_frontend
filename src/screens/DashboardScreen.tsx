@@ -16,7 +16,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import {
   RefreshCw,
-  AlertCircle,
   DollarSign,
   Egg,
   Package,
@@ -30,12 +29,12 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   BarChart,
   Bar,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 interface MetricCardProps {
   title: string;
@@ -151,7 +150,6 @@ function ChartCard({
 
 export default function DashboardScreen() {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
@@ -162,7 +160,6 @@ export default function DashboardScreen() {
 
   const fetchAllSummaries = useCallback(async () => {
     setIsLoading(true);
-    setError("");
 
     try {
       const [expenses, eggProd, eggSales, feedPurchases] = await Promise.all([
@@ -177,7 +174,7 @@ export default function DashboardScreen() {
       setEggSaleSummary(eggSales.data);
       setFeedPurchaseSummary(feedPurchases.data);
     } catch (err) {
-      setError(getErrorDataCase(err));
+      toast.error(getErrorDataCase(err));
     } finally {
       setIsLoading(false);
     }
@@ -249,24 +246,6 @@ export default function DashboardScreen() {
             </Button>
           </div>
         </div>
-
-        {/* ── Error State ── */}
-        {error && (
-          <Card className="border-destructive/30 bg-destructive/5">
-            <CardContent className="flex flex-col items-center py-12 gap-3 text-destructive">
-              <AlertCircle className="h-10 w-10" />
-              <p className="text-base font-medium">{error}</p>
-              <Button
-                onClick={fetchAllSummaries}
-                variant="destructive"
-                size="sm"
-                className="mt-1"
-              >
-                Try Again
-              </Button>
-            </CardContent>
-          </Card>
-        )}
 
         {/* ── Metric Cards ── */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

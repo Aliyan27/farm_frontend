@@ -42,6 +42,7 @@ const VerifyEmailScreen = () => {
       }
     } catch (error) {
       console.log(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     }
   };
 
@@ -62,7 +63,7 @@ const VerifyEmailScreen = () => {
         toast.error(response.message || "Invalid OTP");
       }
     } catch (err: any) {
-      toast.error(err.message || "Verification failed");
+      toast.error(getErrorDataCase(err) || "Something went wrong");
     } finally {
       setIsLoading(false);
     }

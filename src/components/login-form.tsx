@@ -26,7 +26,6 @@ interface LoginFormProps {
   className?: string;
   onSubmit: (email: string, password: string) => Promise<void>;
   isLoading: boolean;
-  error: string;
 }
 
 export function LoginForm(props: LoginFormProps) {
@@ -108,11 +107,6 @@ export function LoginForm(props: LoginFormProps) {
             {props.isLoading ? "Logging in..." : "Login"}
           </Button>
         </Field>
-
-        {/* Error Message */}
-        {props.error && (
-          <p className="text-sm text-red-600 text-center">{props.error}</p>
-        )}
 
         {/* Separator & GitHub */}
         {/* <FieldSeparator>Or continue with</FieldSeparator> */}

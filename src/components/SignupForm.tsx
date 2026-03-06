@@ -10,6 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import {
+  SelectContent,
+  SelectItem,
+  Select,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -18,6 +25,9 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
+  role: Yup.string()
+    .oneOf(["user", "admin"], "Invalid role")
+    .required("Role is required"),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
@@ -25,9 +35,13 @@ const validationSchema = Yup.object({
 
 interface SignupFormProps {
   className?: string;
-  onSubmit: (name: string, email: string, password: string) => Promise<void>;
+  onSubmit: (
+    name: string,
+    email: string,
+    role: string,
+    password: string,
+  ) => Promise<void>;
   isLoading: boolean;
-  error: string;
 }
 
 export function SignupForm(props: SignupFormProps) {
@@ -35,12 +49,12 @@ export function SignupForm(props: SignupFormProps) {
     initialValues: {
       name: "",
       email: "",
+      role: "user",
       password: "",
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("signup===>");
-      props.onSubmit(values.name, values.email, values.password);
+      props.onSubmit(values.name, values.email, values.role, values.password);
     },
   });
 
@@ -115,17 +129,34 @@ export function SignupForm(props: SignupFormProps) {
           ) : null}
         </Field>
 
+        {/* Farm */}
+        <Field className="space-y-2">
+          <FieldLabel htmlFor="farm">Role *</FieldLabel>
+          <Select
+            name="role"
+            value={formik.values.role}
+            onValueChange={(value) => formik.setFieldValue("farm", value)}
+            disabled={props.isLoading}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select farm" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="user">user</SelectItem>
+              <SelectItem value="admin">admin</SelectItem>
+            </SelectContent>
+          </Select>
+          {formik.touched.role && formik.errors.role ? (
+            <p className="text-sm text-red-600 mt-1">{formik.errors.role}</p>
+          ) : null}
+        </Field>
+
         {/* Submit Button */}
         <Field>
           <Button type="submit" disabled={props.isLoading || !formik.isValid}>
             {props.isLoading ? "Creating account..." : "Create Account"}
           </Button>
         </Field>
-
-        {/* Error Message */}
-        {props.error && (
-          <p className="text-sm text-red-600 text-center">{props.error}</p>
-        )}
 
         {/* Separator & Login link */}
         <FieldSeparator>Or</FieldSeparator>

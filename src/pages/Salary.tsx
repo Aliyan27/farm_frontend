@@ -26,7 +26,6 @@ interface SalaryProps {
   showForm: boolean;
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   salaries: ISalary[];
   summary: ISalarySummary | null;
   isLoadingSummary: boolean;
@@ -111,11 +110,7 @@ export default function Salary(props: SalaryProps) {
               title: "All salary records are tracked for monthly reports",
             }}
           >
-            <SalaryForm
-              onSubmit={props.onCreate}
-              isLoading={props.isLoading}
-              error={props.error}
-            />
+            <SalaryForm onSubmit={props.onCreate} isLoading={props.isLoading} />
 
             <Button className="mt-6 w-full" onClick={props.toggleForm}>
               View All Salary Records
@@ -130,7 +125,6 @@ export default function Salary(props: SalaryProps) {
             onEdit={props.onEdit}
             isLoading={props.isLoading}
             isUpdating={props.isUpdating}
-            error={props.error}
             search={props.search}
             onSearch={props.onSearch}
             pageNumber={props.pageNumber}
@@ -149,7 +143,6 @@ interface SalaryListProps {
   salaries: ISalary[];
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   search: string;
   pageNumber: number;
   totalPages: number;
@@ -165,7 +158,6 @@ export function SalaryList({
   salaries,
   isLoading,
   isUpdating,
-  error,
   search,
   pageNumber,
   totalPages,
@@ -209,13 +201,6 @@ export function SalaryList({
       <div className="border rounded-xl overflow-hidden shadow-sm">
         {isLoading ? (
           <SalaryListSkeleton />
-        ) : error ? (
-          <div className="text-center py-12">
-            <div className="text-red-600 font-medium mb-2">
-              Error loading salary records
-            </div>
-            <p className="text-muted-foreground">{error}</p>
-          </div>
         ) : salaries.length > 0 ? (
           <Table>
             <TableHeader>
@@ -238,7 +223,6 @@ export function SalaryList({
                   key={salary.id}
                   salary={salary}
                   isUpdating={isUpdating}
-                  error={error}
                   onDelete={onDelete}
                   onEdit={onEdit}
                 />
@@ -277,12 +261,7 @@ export function SalaryList({
 
         <Button
           onClick={onNextClick}
-          disabled={
-            isLoading ||
-            isUpdating ||
-            pageNumber <= totalPages ||
-            error.length > 0
-          }
+          disabled={isLoading || isUpdating || pageNumber <= totalPages}
           variant="default"
           size="lg"
         >
@@ -296,7 +275,7 @@ export function SalaryList({
 interface SalaryItemProps {
   salary: any;
   isUpdating: boolean;
-  error: string;
+
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
 }
@@ -304,7 +283,6 @@ interface SalaryItemProps {
 const SalaryItem = ({
   salary,
   isUpdating,
-  error,
   onEdit,
   onDelete,
 }: SalaryItemProps) => {
@@ -371,7 +349,6 @@ const SalaryItem = ({
             setOpenEdit(false);
           }}
           isLoading={isUpdating}
-          error={error}
         />
       </EditModal>
     </>

@@ -42,7 +42,6 @@ interface SalaryFormProps {
   }>;
   onSubmit: (values: any) => Promise<void>;
   isLoading: boolean;
-  error: string;
   className?: string;
 }
 
@@ -50,7 +49,6 @@ export function SalaryForm({
   initialValues = {},
   onSubmit,
   isLoading,
-  error,
   className,
 }: SalaryFormProps) {
   const formik = useFormik({
@@ -226,10 +224,6 @@ export function SalaryForm({
           {isLoading ? "Saving..." : "Save"}
         </Button>
       </div>
-
-      {error && (
-        <p className="text-sm text-red-600 text-center mt-4">{error}</p>
-      )}
     </form>
   );
 }

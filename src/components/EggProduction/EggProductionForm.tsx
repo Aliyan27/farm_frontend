@@ -40,7 +40,6 @@ interface EggProductionFormProps {
   }>;
   onSubmit: (values: any) => Promise<void>;
   isLoading: boolean;
-  error: string;
   className?: string;
 }
 
@@ -48,7 +47,6 @@ export function EggProductionForm({
   initialValues = {},
   onSubmit,
   isLoading,
-  error,
   className,
 }: EggProductionFormProps) {
   const formik = useFormik({
@@ -180,10 +178,6 @@ export function EggProductionForm({
           {isLoading ? "Saving..." : "Save"}
         </Button>
       </div>
-
-      {error && (
-        <p className="text-sm text-red-600 text-center mt-4">{error}</p>
-      )}
     </form>
   );
 }

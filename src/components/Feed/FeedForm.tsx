@@ -34,7 +34,6 @@ interface FeedFormProps {
   initialValues?: IFeed;
   onSubmit: (values: any) => Promise<void>;
   isLoading: boolean;
-  error: string;
 }
 
 export function FeedForm({
@@ -42,7 +41,6 @@ export function FeedForm({
   initialValues,
   onSubmit,
   isLoading,
-  error,
 }: FeedFormProps) {
   const formik = useFormik({
     initialValues: {
@@ -249,11 +247,6 @@ export function FeedForm({
             {isLoading ? "Saving..." : "Save"}
           </Button>
         </div>
-
-        {/* Server error */}
-        {error && (
-          <p className="text-sm text-red-600 text-center mt-3">{error}</p>
-        )}
       </FieldGroup>
     </form>
   );

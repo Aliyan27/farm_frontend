@@ -10,10 +10,10 @@ import {
 import { getErrorDataCase } from "@/lib/utils";
 import Feed from "@/pages/Feed";
 import type { IFeed, IFeedSummary } from "@/@types/feedPurchaseTypes";
+import toast from "react-hot-toast";
 
 const FeedScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [feedPurchases, setFeedPurchases] = useState<IFeed[]>([]);
   const pageNumber = useRef(1);
@@ -62,10 +62,9 @@ const FeedScreen = () => {
           response.data.pagination.pages > 0;
         totalPages.current = response.data.pagination.pages;
         setFeedPurchases(response.data.items);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -77,10 +76,9 @@ const FeedScreen = () => {
       const response = await createFeedPurchaseService(values);
       if (response.message.toLowerCase() === "success") {
         setFeedPurchases((prev) => [...prev, response.data]);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoading(false);
     }
@@ -91,10 +89,9 @@ const FeedScreen = () => {
       const response = await deleteFeedPurchaseService(id);
       if (response.message.toLowerCase() === "success") {
         setFeedPurchases((prev) => prev.filter((item) => item.id !== id));
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     }
   };
 
@@ -109,10 +106,9 @@ const FeedScreen = () => {
           prev[index] = { ...prev[index], ...updatedPurchase };
           return [...prev];
         });
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsUpdating(false);
     }
@@ -144,10 +140,9 @@ const FeedScreen = () => {
 
       if (response.message.toLowerCase() === "success") {
         setFeedSummary(response.data);
-        setError("");
       }
     } catch (error) {
-      setError(getErrorDataCase(error));
+      toast.error(getErrorDataCase(error));
     } finally {
       setIsLoadingSummary(false);
     }
@@ -187,7 +182,6 @@ const FeedScreen = () => {
       feedPurchases={feedPurchases}
       isLoading={isLoading}
       isUpdating={isUpdating}
-      error={error}
       feedSummary={feedSummary}
       selectedFarm={selectedFarm}
       startDate={startDate}

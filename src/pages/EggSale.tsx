@@ -27,7 +27,6 @@ interface EggSaleProps {
   showForm: boolean;
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   sales: IEggSale[];
   summary: IEggSaleSummary | null;
   isLoadingSummary: boolean;
@@ -151,7 +150,6 @@ export default function EggSale(props: EggSaleProps) {
             <EggSaleForm
               onSubmit={props.onCreate}
               isLoading={props.isLoading}
-              error={props.error}
             />
 
             <Button className="mt-6 w-full" onClick={props.toggleForm}>
@@ -167,7 +165,6 @@ export default function EggSale(props: EggSaleProps) {
             onEdit={props.onEdit}
             isLoading={props.isLoading}
             isUpdating={props.isUpdating}
-            error={props.error}
             pageNumber={props.pageNumber}
             totalPages={props.totalPages}
             toggleForm={props.toggleForm}
@@ -184,7 +181,6 @@ interface EggSaleListProps {
   sales: IEggSale[];
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   pageNumber: number;
   totalPages: number;
   onEdit: (id: number, values: any) => Promise<void>;
@@ -198,7 +194,6 @@ export function EggSaleList({
   sales,
   isLoading,
   isUpdating,
-  error,
   pageNumber,
   totalPages,
   onEdit,
@@ -249,20 +244,12 @@ export function EggSaleList({
                   key={sale.id}
                   sale={sale}
                   isUpdating={isUpdating}
-                  error={error}
                   onDelete={onDelete}
                   onEdit={onEdit}
                 />
               ))}
             </TableBody>
           </Table>
-        ) : error ? (
-          <div className="text-center py-12">
-            <div className="text-red-600 font-medium mb-2">
-              Error loading sales records
-            </div>
-            <p className="text-muted-foreground">{error}</p>
-          </div>
         ) : (
           <div className="text-center py-16 space-y-6">
             <h2 className="text-2xl font-bold text-muted-foreground">
@@ -292,12 +279,7 @@ export function EggSaleList({
 
         <Button
           size="lg"
-          disabled={
-            isLoading ||
-            isUpdating ||
-            pageNumber >= totalPages ||
-            error.length > 0
-          }
+          disabled={isLoading || isUpdating || pageNumber >= totalPages}
           onClick={onNextClick}
         >
           Next Page
@@ -310,7 +292,6 @@ export function EggSaleList({
 interface EggSaleItemProps {
   sale: IEggSale;
   isUpdating: boolean;
-  error: string;
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
 }
@@ -318,7 +299,6 @@ interface EggSaleItemProps {
 export const EggSaleItem = ({
   sale,
   isUpdating,
-  error,
   onEdit,
   onDelete,
 }: EggSaleItemProps) => {
@@ -411,7 +391,6 @@ export const EggSaleItem = ({
             setOpenEdit(false);
           }}
           isLoading={isUpdating}
-          error={error}
         />
       </EditModal>
     </>

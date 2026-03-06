@@ -29,7 +29,6 @@ interface EggProductionProps {
   showForm: boolean;
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   records: IEggProduction[];
   summary: IEggProductionSummary | null;
   isLoadingSummary: boolean;
@@ -153,7 +152,6 @@ export default function EggProduction(props: EggProductionProps) {
             <EggProductionForm
               onSubmit={props.onCreate}
               isLoading={props.isLoading}
-              error={props.error}
             />
 
             <Button className="mt-6 w-full" onClick={props.toggleForm}>
@@ -169,7 +167,6 @@ export default function EggProduction(props: EggProductionProps) {
             onEdit={props.onEdit}
             isLoading={props.isLoading}
             isUpdating={props.isUpdating}
-            error={props.error}
             toggleForm={props.toggleForm}
             pageNumber={props.pageNumber}
             totalPages={props.totalPages}
@@ -186,7 +183,6 @@ interface EggProductionListProps {
   records: any[];
   isLoading: boolean;
   isUpdating: boolean;
-  error: string;
   pageNumber: number;
   totalPages: number;
   onEdit: (id: number, values: any) => Promise<void>;
@@ -200,7 +196,6 @@ export function EggProductionList({
   records,
   isLoading,
   isUpdating,
-  error,
   pageNumber,
   totalPages,
   onEdit,
@@ -248,20 +243,12 @@ export function EggProductionList({
                   key={record.id}
                   record={record}
                   isUpdating={isUpdating}
-                  error={error}
                   onDelete={onDelete}
                   onEdit={onEdit}
                 />
               ))}
             </TableBody>
           </Table>
-        ) : error ? (
-          <div className="text-center py-12">
-            <div className="text-red-600 font-medium mb-2">
-              Error loading production records
-            </div>
-            <p className="text-muted-foreground">{error}</p>
-          </div>
         ) : (
           <div className="text-center py-16 space-y-6">
             <h2 className="text-2xl font-bold text-muted-foreground">
@@ -293,12 +280,7 @@ export function EggProductionList({
 
         <Button
           size="lg"
-          disabled={
-            isLoading ||
-            isUpdating ||
-            pageNumber >= totalPages ||
-            error.length > 0
-          }
+          disabled={isLoading || isUpdating || pageNumber >= totalPages}
           onClick={onNextClick}
         >
           Next Page
@@ -311,7 +293,6 @@ export function EggProductionList({
 interface EggProductionItemProps {
   record: any;
   isUpdating: boolean;
-  error: string;
   onEdit: (id: number, values: any) => Promise<void>;
   onDelete: (id: number) => void;
 }
@@ -319,7 +300,6 @@ interface EggProductionItemProps {
 const EggProductionItem = ({
   record,
   isUpdating,
-  error,
   onEdit,
   onDelete,
 }: EggProductionItemProps) => {
@@ -376,7 +356,6 @@ const EggProductionItem = ({
             setOpenEdit(false);
           }}
           isLoading={isUpdating}
-          error={error}
         />
       </EditModal>
     </>

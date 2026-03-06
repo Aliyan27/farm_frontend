@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DollarSign, TrendingUp, AlertCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface IncomeStatement {
   period: string;
@@ -42,7 +43,6 @@ interface IncomeStatement {
 
 export default function IncomeStatementScreen() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [statement, setStatement] = useState<IncomeStatement | null>(null);
 
   const [startDate, setStartDate] = useState<string>("");
@@ -51,17 +51,16 @@ export default function IncomeStatementScreen() {
   const fetchIncomeStatement = useCallback(async () => {
     try {
       setIsLoading(true);
-      setError("");
 
       const response = await getIncomeStatementService({ startDate, endDate });
 
       if (response.message === "success") {
         setStatement(response.data);
       } else {
-        setError("Failed to load income statement");
+        toast.error("Failed to load income statement");
       }
     } catch (err) {
-      setError(getErrorDataCase(err));
+      toast.error(getErrorDataCase(err));
     } finally {
       setIsLoading(false);
     }
@@ -125,14 +124,6 @@ export default function IncomeStatementScreen() {
         {/* Loading / Error / Content */}
         {isLoading ? (
           <IncomeStatementSkeleton />
-        ) : error ? (
-          <div className="text-center py-12 text-red-600">
-            <AlertCircle className="h-12 w-12 mx-auto mb-4" />
-            <p className="text-lg font-medium">{error}</p>
-            <Button onClick={handleRefresh} className="mt-4">
-              Try Again
-            </Button>
-          </div>
         ) : statement ? (
           <IncomeStatementView data={statement} />
         ) : (
