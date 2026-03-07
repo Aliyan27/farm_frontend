@@ -3,13 +3,13 @@ import { baseUrl } from "../utils/Config";
 import RouteNames from "@/routes/RouteNames";
 
 const newBaseUrl = () => {
-  if (window.location.protocol === "http:") {
-    let newBaseUrl: string | undefined = baseUrl;
-    newBaseUrl = newBaseUrl?.replace("https", "http");
-    return newBaseUrl;
-  } else {
-    return baseUrl;
-  }
+  // if (window.location.protocol === "http:") {
+  //   let newBaseUrl: string | undefined = baseUrl;
+  //   newBaseUrl = newBaseUrl?.replace("https", "http");
+  //   return newBaseUrl;
+  // } else {
+  return baseUrl;
+  // }
 };
 
 axios.interceptors.response.use(
