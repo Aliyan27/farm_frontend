@@ -88,13 +88,14 @@ export function NavUser() {
                 <KeyRound className="mr-2 h-4 w-4" />
                 Change Password
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => navigateTo(RouteNames.verifyEmail)}
-              >
-                <MailCheck className="mr-2 h-4 w-4" />
-                Verify Email
-              </DropdownMenuItem>
-
+              {!user?.isEmailVerified && (
+                <DropdownMenuItem
+                  onClick={() => navigateTo(RouteNames.verifyEmail)}
+                >
+                  <MailCheck className="mr-2 h-4 w-4" />
+                  Verify Email
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 onClick={() => navigateTo(RouteNames.changeEmail)}
               >
