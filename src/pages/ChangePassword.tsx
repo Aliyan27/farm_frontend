@@ -4,6 +4,8 @@ import * as Yup from "yup";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
+import RouteNames from "@/routes/RouteNames";
 
 const validationSchema = Yup.object({
   oldPassword: Yup.string()
@@ -159,9 +161,9 @@ const ChangePassword = (props: ChangePasswordProps) => {
 
         {/* Back to login */}
         <div className="text-center text-sm">
-          <a href="/login" className="text-primary hover:underline">
+          <Link to={RouteNames.login} className="text-primary hover:underline">
             Back to Login
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -24,6 +24,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import RouteNames from "@/routes/RouteNames";
+import { Link } from "react-router-dom";
 
 const data = {
   navMain: [
@@ -74,7 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#" className="flex items-center gap-3 px-1">
+              <Link to="" className="flex items-center gap-3 px-1">
                 {/* Logo mark */}
                 <div className="relative flex aspect-square size-9 items-center justify-center rounded-xl overflow-hidden shadow-sm shrink-0">
                   {/* gradient background */}
@@ -91,7 +92,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     Farm Management
                   </span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

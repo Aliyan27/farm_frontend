@@ -129,7 +129,10 @@ export function LoginForm(props: LoginFormProps) {
 
           <FieldDescription className="text-center mt-4">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="underline underline-offset-4">
+            <Link
+              to={RouteNames.signup}
+              className="underline underline-offset-4"
+            >
               Sign up
             </Link>
           </FieldDescription>

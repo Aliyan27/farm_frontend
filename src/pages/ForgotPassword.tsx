@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import { cn } from "@/lib/utils";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
+import RouteNames from "@/routes/RouteNames";
 
 type ForgotPasswordProps = {
   showOtpForm: boolean;
@@ -47,7 +48,10 @@ const ForgotPassword = (props: ForgotPasswordProps) => {
         )}
 
         <div className="text-center text-sm space-y-2">
-          <Link to="/login" className="text-primary hover:underline block">
+          <Link
+            to={RouteNames.login}
+            className="text-primary hover:underline block"
+          >
             Back to Login
           </Link>
           {props.showOtpForm && (

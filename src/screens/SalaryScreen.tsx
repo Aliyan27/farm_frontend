@@ -80,7 +80,6 @@ const SalaryScreen = () => {
           response.data.pagination.pages > 0;
         totalPages.current = response.data.pagination.pages;
         setSalaries(response.data.items);
-        toast.error("");
       }
     } catch (error) {
       toast.error(getErrorDataCase(error));
@@ -95,7 +94,6 @@ const SalaryScreen = () => {
       const response = await createSalaryService(values);
       if (response.message.toLowerCase() === "success") {
         setSalaries((prev) => [...prev, response.data]);
-        toast.error("");
       }
     } catch (error) {
       toast.error(getErrorDataCase(error));
@@ -109,7 +107,6 @@ const SalaryScreen = () => {
       const response = await deleteSalaryService(id);
       if (response.message.toLowerCase() === "success") {
         setSalaries((prev) => prev.filter((item) => item.id !== id));
-        toast.error("");
       }
     } catch (error) {
       toast.error(getErrorDataCase(error));
@@ -141,7 +138,6 @@ const SalaryScreen = () => {
           prev[index] = { ...prev[index], ...updatedSalary };
           return [...prev];
         });
-        toast.error("");
       }
     } catch (error) {
       toast.error(getErrorDataCase(error));
@@ -162,7 +158,6 @@ const SalaryScreen = () => {
 
       if (response.message.toLowerCase() === "success") {
         setSummary(response.data);
-        toast.error("");
       }
     } catch (error) {
       toast.error(getErrorDataCase(error));

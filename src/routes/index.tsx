@@ -9,15 +9,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useNavigation } from "@/Hooks/useNavigation";
 import RouteNames from "./RouteNames";
 
@@ -98,7 +90,10 @@ const InitiateRoute = () => {
           );
         })}
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route
+          path="*"
+          element={<Navigate to={RouteNames.dashboard} replace />}
+        />
       </Routes>
     </>
   );

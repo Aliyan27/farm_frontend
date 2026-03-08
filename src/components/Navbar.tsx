@@ -118,7 +118,7 @@ export function Navbar() {
         {/* Center: Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-1">
           <NavLink
-            to="/"
+            to={RouteNames.dashboard}
             className={({ isActive }) =>
               cn(
                 "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground px-3 py-2",
@@ -157,7 +157,7 @@ export function Navbar() {
           </NavLink>
 
           <NavLink
-            to="/egg-production"
+            to={RouteNames.eggProduction}
             className={({ isActive }) =>
               cn(
                 "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground px-3 py-2",
@@ -170,7 +170,7 @@ export function Navbar() {
           </NavLink>
 
           <NavLink
-            to="/egg-sales"
+            to={RouteNames.eggSale}
             className={({ isActive }) =>
               cn(
                 "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground px-3 py-2",
@@ -183,7 +183,7 @@ export function Navbar() {
           </NavLink>
 
           <NavLink
-            to="/salaries"
+            to={RouteNames.salaries}
             className={({ isActive }) =>
               cn(
                 "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground px-3 py-2",
@@ -196,7 +196,7 @@ export function Navbar() {
           </NavLink>
 
           <NavLink
-            to="/reports"
+            to={RouteNames.report}
             className={({ isActive }) =>
               cn(
                 "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground px-3 py-2",
