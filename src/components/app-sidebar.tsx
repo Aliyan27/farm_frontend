@@ -3,20 +3,16 @@
 import * as React from "react";
 import {
   BarChart3,
-  Command,
   DollarSign,
   Egg,
   LayoutDashboard,
-  LifeBuoy,
   Package,
-  Send,
   ShoppingCart,
   Users,
+  Beef,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
-// import { NavProjects } from "@/components/nav-projects";
-// import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -30,11 +26,6 @@ import {
 import RouteNames from "@/routes/RouteNames";
 
 const data = {
-  user: {
-    name: "Malik",
-    email: "malik@example.com",
-    avatar: "/avatars/malik.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -73,47 +64,50 @@ const data = {
       icon: BarChart3,
     },
   ],
-  // Keep your navSecondary and projects if needed, or remove them
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
+      {/* Header / Brand */}
+      <SidebarHeader className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
+              <a href="#" className="flex items-center gap-3 px-1">
+                {/* Logo mark */}
+                <div className="relative flex aspect-square size-9 items-center justify-center rounded-xl overflow-hidden shadow-sm shrink-0">
+                  {/* gradient background */}
+                  <div className="absolute inset-0 bg-linear-to-br from-amber-400 to-orange-500" />
+                  <Beef className="relative size-5 text-white drop-shadow" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+
+                {/* Brand text */}
+                <div className="grid flex-1 text-left leading-tight">
+                  <span className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+                    GreenOva
+                  </span>
+                  <span className="truncate text-[11px] font-medium text-zinc-400 uppercase tracking-widest">
+                    Farm Management
+                  </span>
                 </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+
+      {/* Nav items */}
+      <SidebarContent className="py-4">
+        {/* section label */}
+        <p className="px-4 mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+          Main Menu
+        </p>
         <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
-      <SidebarFooter>
+
+      {/* Footer / User */}
+      <SidebarFooter className="border-t border-zinc-200 dark:border-zinc-800 pt-3">
         <NavUser />
       </SidebarFooter>
     </Sidebar>

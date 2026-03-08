@@ -73,30 +73,22 @@ const InitiateRoute = () => {
                   <SidebarProvider>
                     <AppSidebar variant="inset" />
                     <SidebarInset className="bg-background">
-                      <main className="p-6">
-                        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                          <div className="flex items-center gap-2 px-4">
-                            <SidebarTrigger className="-ml-1" />
-                            <Separator
-                              orientation="vertical"
-                              className="mr-2 data-[orientation=vertical]:h-4"
-                            />
-                            <Breadcrumb>
-                              <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                  <BreadcrumbLink>
-                                    Build Your Application
-                                  </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                                </BreadcrumbItem>
-                              </BreadcrumbList>
-                            </Breadcrumb>
-                          </div>
+                      {/* Mainlayout · TSX Copy */}
+                      <main className="flex flex-col min-h-screen bg-stone-50 dark:bg-zinc-950">
+                        {/* Top gradient accent bar */}
+                        <div className="h-0.5 w-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 shrink-0" />
+
+                        {/* Header */}
+                        <header className="flex h-14 shrink-0 items-center gap-3 px-4 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                          <SidebarTrigger className="-ml-1 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" />
+                          <div className="w-px h-4 bg-zinc-200 dark:bg-zinc-700" />
+                          <Breadcrumb />
                         </header>
-                        <route.element />
+
+                        {/* Page content */}
+                        <div className="flex-1 p-6">
+                          <route.element />
+                        </div>
                       </main>
                     </SidebarInset>
                   </SidebarProvider>

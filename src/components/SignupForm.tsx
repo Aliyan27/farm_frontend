@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Link } from "react-router";
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -164,9 +165,9 @@ export function SignupForm(props: SignupFormProps) {
         <Field>
           <FieldDescription className="text-center mt-4">
             Already have an account?{" "}
-            <a href="/login" className="underline underline-offset-4">
+            <Link to="/login" className="underline underline-offset-4">
               Login
-            </a>
+            </Link>
           </FieldDescription>
         </Field>
       </FieldGroup>

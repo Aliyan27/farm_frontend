@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import RouteNames from "@/routes/RouteNames";
+import { Link } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 
 // Validation schema with Yup
@@ -128,9 +129,9 @@ export function LoginForm(props: LoginFormProps) {
 
           <FieldDescription className="text-center mt-4">
             Don&apos;t have an account?{" "}
-            <a href="/signup" className="underline underline-offset-4">
+            <Link to="/signup" className="underline underline-offset-4">
               Sign up
-            </a>
+            </Link>
           </FieldDescription>
         </Field>
       </FieldGroup>
